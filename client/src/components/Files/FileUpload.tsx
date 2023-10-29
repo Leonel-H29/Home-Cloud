@@ -1,10 +1,15 @@
 import React, { useState, ChangeEvent } from 'react';
 import axios from 'axios';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
 
-const FileUpload: React.FC = () => {
+interface FileUploadProps {
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const FileUpload: React.FC<FileUploadProps> = ({ showModal, setShowModal }) => {
   const [file, setFile] = useState<File | null>(null);
 
   console.log(UrlAPI);
@@ -16,7 +21,7 @@ const FileUpload: React.FC = () => {
   };
 
   const handleFileUpload = async () => {
-    if (file) {
+    if (file && showModal) {
       try {
         const formData = new FormData();
         formData.append('file', file);
@@ -26,6 +31,7 @@ const FileUpload: React.FC = () => {
         });
 
         alert('File uploaded successfully!');
+        setShowModal(false); // Cerramos el modal después de subir el archivo
       } catch (error) {
         console.error('Error uploading file:', error);
       }
@@ -36,10 +42,15 @@ const FileUpload: React.FC = () => {
     <div>
       <Modal.Body>
         {/* Aquí puedes agregar un formulario para ingresar el nombre del archivo */}
-        <input type="file" onChange={handleFileChange} />
+        <Form.Group controlId="formFileSm" className="mb-3">
+          <Form.Label>Select a file</Form.Label>
+          <Form.Control type="file" size="sm" onChange={handleFileChange} />
+        </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary">Cancel</Button>
+        <Button variant="secondary" onClick={() => setShowModal(false)}>
+          Cancel
+        </Button>
         <Button variant="primary" onClick={handleFileUpload}>
           Save File
         </Button>

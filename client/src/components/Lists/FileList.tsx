@@ -5,10 +5,9 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import { ButtonToolbar, Form, InputGroup, Modal } from 'react-bootstrap';
 import FileUpload from '../Files/FileUpload';
+import { UrlAPI } from './List';
 
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
-
-const FileList = () => {
+export const FileList = () => {
   const [location, setLocation] = useState('.');
   const [contents, setContents] = useState([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
@@ -96,10 +95,19 @@ const FileList = () => {
       <Modal.Header closeButton>
         <Modal.Title>Upload a new file</Modal.Title>
       </Modal.Header>
-      <FileUpload
-        showModal={showModalCreateFile}
-        setShowModal={setShowModalCreateFile}
-      />
+      <FileUpload showModal={showModalCreateFile} />
+      {/* Aquí puedes agregar un formulario para ingresar el nombre del archivo */}
+      {/* <Modal.Body>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="secondary"
+                onClick={() => setShowModalCreateFile(false)}
+              >
+                Cancel
+              </Button>
+              <Button variant="primary">Save File</Button>
+            </Modal.Footer> */}
     </Modal>
   );
 
@@ -189,5 +197,3 @@ const FileList = () => {
     </>
   );
 };
-
-export default FileList;
