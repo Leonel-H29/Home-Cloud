@@ -1,6 +1,7 @@
 import './App.css';
 //import FileMain from './components/Files/FileMain';
 import FileList from './components/Lists/List';
+import NavBarComponent from './components/NavBar/NavBar';
 //import DirectoryUpload from './components/Directories/DirectoryUpload';
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
 
   return (
     <>
+      <NavBarComponent />
       <h1>File Home Server</h1>
       <div className="card">
         <FileList />

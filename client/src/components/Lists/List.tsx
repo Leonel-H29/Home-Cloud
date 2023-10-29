@@ -139,19 +139,20 @@ const FileList = () => {
             <th>#</th>
             <th>Name</th>
             <th>Type</th>
+            <th>Date Last Updated</th>
+            <th>Size</th>
           </tr>
         </thead>
         <tbody>
-          {contents.map((item: string, index) => {
-            const itemName =
-              typeof item === 'string' ? item.split('/').pop() : '';
-            const itemType =
-              typeof item === 'string' && item.includes('.')
-                ? 'Archivo'
-                : 'Directorio';
+          {contents.map((item, index) => {
+            const itemName = item.name;
+            const itemType = item.type;
+            const itemLastModified = item.last_modified;
+            const itemSize = item.size_mb;
+
             return (
               <tr key={index}>
-                <td>#</td>
+                <td>{index + 1}</td>
                 <td>
                   {itemType === 'Directorio' ? (
                     <svg
@@ -179,6 +180,8 @@ const FileList = () => {
                   {itemName}
                 </td>
                 <td>{itemType}</td>
+                <td>{itemLastModified}</td>
+                <td>{itemSize} MB</td>
               </tr>
             );
           })}
