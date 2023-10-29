@@ -14,8 +14,10 @@ def main():
 @router.get(URL+"list")
 def list_files_and_directories(location: str = "."):
     try:
+        print(location)
         # Obtener la lista de archivos y directorios
         contents = listdir(location)
+        print(contents)
 
         # Incluir archivos y directorios ocultos
         all_contents = [path.join(location, item) for item in contents]
