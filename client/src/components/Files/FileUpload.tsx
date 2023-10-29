@@ -1,10 +1,12 @@
 import React, { useState, ChangeEvent } from 'react';
 import axios from 'axios';
+import { Button, Modal } from 'react-bootstrap';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
 
 const FileUpload: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
+
   console.log(UrlAPI);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,9 +34,16 @@ const FileUpload: React.FC = () => {
 
   return (
     <div>
-      <h2>Upload a File</h2>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleFileUpload}>Upload</button>
+      <Modal.Body>
+        {/* Aquí puedes agregar un formulario para ingresar el nombre del archivo */}
+        <input type="file" onChange={handleFileChange} />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary">Cancel</Button>
+        <Button variant="primary" onClick={handleFileUpload}>
+          Save File
+        </Button>
+      </Modal.Footer>
     </div>
   );
 };
