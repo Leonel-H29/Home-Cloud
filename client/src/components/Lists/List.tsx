@@ -105,7 +105,7 @@ const FileList = () => {
 
   return (
     <>
-      <h2>Listado de Archivos y Directorios</h2>
+      <h2>Files & Directories List</h2>
       <ButtonToolbar
         className="justify-content-between"
         aria-label="Toolbar with Button groups"
@@ -139,6 +139,8 @@ const FileList = () => {
             <th>#</th>
             <th>Name</th>
             <th>Type</th>
+            <th>Owner</th>
+            <th>Created</th>
             <th>Date Last Updated</th>
             <th>Size</th>
           </tr>
@@ -147,8 +149,10 @@ const FileList = () => {
           {contents.map((item, index) => {
             const itemName = item.name;
             const itemType = item.type;
+            const itemOwner = item.owner;
+            const itemCreated = item.created;
             const itemLastModified = item.last_modified;
-            const itemSize = item.size_mb;
+            const itemSize = item.size;
 
             return (
               <tr key={index}>
@@ -180,13 +184,17 @@ const FileList = () => {
                   {itemName}
                 </td>
                 <td>{itemType}</td>
+                <td>{itemOwner}</td>
+                <td>{itemCreated}</td>
                 <td>{itemLastModified}</td>
-                <td>{itemSize} MB</td>
+                <td>{itemSize}</td>
               </tr>
             );
           })}
         </tbody>
       </Table>
+
+      <p>Content: {contents.length} elements</p>
 
       {ModalFileUpload}
     </>

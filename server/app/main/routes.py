@@ -1,7 +1,9 @@
 from fastapi import APIRouter
 from os import listdir, path, stat
+from os.path import join
 from datetime import datetime
-import math
+from humanize import naturalsize
+import pwd
 
 from fastapi import HTTPException
 
@@ -31,15 +33,22 @@ def list_files_and_directories(location: str = "."):
         contents_info = []
         for item in visible_contents:
             info = stat(item)
+            print(info)
+            created = datetime.fromtimestamp(info.st_ctime)
             last_modified = datetime.fromtimestamp(info.st_mtime)
-            size_mb = math.ceil(info.st_size / (1024 * 1024))  # Convertir a MB
+            size = info.st_size  
             item_type = "Archivo" if path.isfile(item) else "Directorio"
+            owner_info = pwd.getpwuid(info.st_uid)
+            
 
             contents_info.append({
                 "name": item.split('/')[-1],
                 "type": item_type,
+                "created":created.strftime("%d-%m-%Y %H:%M:%S"),
                 "last_modified": last_modified.strftime("%d-%m-%Y %H:%M:%S"),
-                "size_mb": size_mb
+                "owner" : owner_info.pw_name,
+                "content": len(listdir(join(location, item))) if item_type=='Directorio' else None,   
+                "size": naturalsize(size)
             })
 
         return {"contents": contents_info}
