@@ -8,9 +8,18 @@ import FileUpload from '../Files/FileUpload';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
+interface Item {
+  name: string;
+  type: string;
+  owner: string;
+  created: string;
+  last_modified: string;
+  size: string;
+}
+
 const FileList = () => {
   const [location, setLocation] = useState('.');
-  const [contents, setContents] = useState([]);
+  const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
 
   const listFilesAndDirectories = async () => {
@@ -28,6 +37,7 @@ const FileList = () => {
 
   useEffect(() => {
     listFilesAndDirectories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // El segundo argumento [] significa que este efecto se ejecuta solo al montar el componente
 
   const handleLocationChange = (e: {
@@ -123,29 +133,22 @@ const FileList = () => {
         </thead>
         <tbody>
           {contents.map((item, index) => {
-            const itemName = item.name;
-            const itemType = item.type;
-            const itemOwner = item.owner;
-            const itemCreated = item.created;
-            const itemLastModified = item.last_modified;
-            const itemSize = item.size;
-
             return (
               <tr key={index}>
                 <td>{index + 1}</td>
                 <td>
-                  {itemType === 'Directorio' ? (
+                  {item.type === 'Directory' ? (
                     <i className="bi bi-folder-fill"></i>
                   ) : (
                     <i className="bi bi-file-earmark"></i>
                   )}{' '}
-                  {itemName}
+                  {item.name}
                 </td>
-                <td>{itemType}</td>
-                <td>{itemOwner}</td>
-                <td>{itemCreated}</td>
-                <td>{itemLastModified}</td>
-                <td>{itemSize}</td>
+                <td>{item.type}</td>
+                <td>{item.owner}</td>
+                <td>{item.created}</td>
+                <td>{item.last_modified}</td>
+                <td>{item.size}</td>
               </tr>
             );
           })}

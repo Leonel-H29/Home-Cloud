@@ -4,7 +4,7 @@ from os.path import join
 from datetime import datetime
 from humanize import naturalsize
 import pwd
-
+from app.dirs.conf_dir import get_size
 from fastapi import HTTPException
 
 URL = '/api/'
@@ -25,19 +25,17 @@ def list_files_and_directories(location: str = "."):
         # Incluir archivos y directorios ocultos
         all_contents = [path.join(location, item) for item in contents]
 
-        # Filtrar archivos y directorios ocultos
-        visible_contents = [
-            item for item in all_contents if not item.split('/')[-1].startswith('.')]
+        
 
         # Obtener información de cada elemento
         contents_info = []
-        for item in visible_contents:
+        for item in all_contents:
             info = stat(item)
             print(info)
             created = datetime.fromtimestamp(info.st_ctime)
             last_modified = datetime.fromtimestamp(info.st_mtime)
-            size = info.st_size  
-            item_type = "Archivo" if path.isfile(item) else "Directorio"
+            size = get_size(item) if path.isdir(item) else info.st_size
+            item_type = "File" if path.isfile(item) else "Directory"
             owner_info = pwd.getpwuid(info.st_uid)
             
 
