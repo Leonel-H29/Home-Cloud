@@ -51,7 +51,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ showModal, setShowModal }) => {
         <Button variant="secondary" onClick={() => setShowModal(false)}>
           Cancel
         </Button>
-        <Button variant="primary" onClick={handleFileUpload}>
+        <Button variant="success" onClick={handleFileUpload}>
           Save File
         </Button>
       </Modal.Footer>

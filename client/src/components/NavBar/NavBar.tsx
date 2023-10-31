@@ -1,9 +1,20 @@
+import { useEffect, useState } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 function NavBarComponent() {
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    const date_now = new Date();
+    const formattedDate = `${date_now.getDate()}/${
+      date_now.getMonth() + 1
+    }/${date_now.getFullYear()} ${date_now.getHours()}:${date_now.getMinutes()}`;
+    setCurrentDate(formattedDate);
+  }, []);
+
   return (
     <Navbar expand="lg" className="bg-body-tertiary">
       <Container>
@@ -25,6 +36,9 @@ function NavBarComponent() {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
+        </Navbar.Collapse>
+        <Navbar.Collapse className="justify-content-end">
+          <Navbar.Text>{currentDate} HS.</Navbar.Text>
         </Navbar.Collapse>
       </Container>
     </Navbar>

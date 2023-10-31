@@ -10,7 +10,9 @@ function App() {
   return (
     <>
       <NavBarComponent />
+      <br />
       <h1>File Home Server</h1>
+      <br />
       <div className="card">
         <FileList />
       </div>
