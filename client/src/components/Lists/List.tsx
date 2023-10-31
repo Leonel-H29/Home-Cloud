@@ -50,6 +50,27 @@ const FileList = () => {
     listFilesAndDirectories();
   };
 
+  const getIconForFile = (fileName: string) => {
+    const fileExtension: string = fileName.split('.').pop()?.toLowerCase();
+    const defaultExtension = 'bi bi-file-earmark';
+
+    const isImageExtension = /(jpg|jpeg|png|gif)/.test(fileExtension);
+
+    const iconMapping = {
+      pdf: 'bi bi-file-earmark-pdf',
+      docx: 'bi bi-file-earmark-word',
+      xls: 'bi bi-file-earmark-excel',
+      txt: 'bi bi-filetype-txt',
+      zip: 'bi bi-file-earmark-zip',
+      py: 'bi bi-filetype-py',
+      '': isImageExtension ? 'bi bi-file-earmark-image' : 'bi bi-file-earmark',
+      //png: 'bi bi-file-earmark-image',
+      // Agrega más extensiones y sus iconos aquí según sea necesario
+    };
+
+    return iconMapping[fileExtension] ?? defaultExtension;
+  };
+
   const BtnDownload = (
     <Button title="Download a File">
       <i className="bi bi-download"></i>
@@ -140,7 +161,8 @@ const FileList = () => {
                   {item.type === 'Directory' ? (
                     <i className="bi bi-folder-fill"></i>
                   ) : (
-                    <i className="bi bi-file-earmark"></i>
+                    // <i className="bi bi-file-earmark"></i>
+                    <i className={getIconForFile(item.name)}></i>
                   )}{' '}
                   {item.name}
                 </td>
