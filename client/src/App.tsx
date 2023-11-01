@@ -1,6 +1,7 @@
 import './App.css';
+
 //import FileMain from './components/Files/FileMain';
-import FileList from './components/Lists/List';
+import FileListComponent from './components/Lists/List';
 import NavBarComponent from './components/NavBar/NavBar';
 //import DirectoryUpload from './components/Directories/DirectoryUpload';
 
@@ -13,8 +14,9 @@ function App() {
       <br />
       <h1>File Home Server</h1>
       <br />
+      <br />
       <div className="card">
-        <FileList />
+        <FileListComponent />
       </div>
       {/* <div className="card">
         <FileMain />

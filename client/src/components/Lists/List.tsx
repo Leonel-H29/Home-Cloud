@@ -17,14 +17,16 @@ interface Item {
   size: string;
 }
 
-const FileList = () => {
-  const [location, setLocation] = useState('.');
+const FileListComponent = () => {
+  const [location, setLocation] = useState('./');
   const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
+  const [locationHistory, setLocationHistory] = useState<string[]>([]);
+  const [currentLocation, setCurrentLocation] = useState<string>('.');
 
-  const listFilesAndDirectories = async () => {
+  const listFilesAndDirectories = async (newLocation: string = location) => {
     try {
-      const response = await axios.get(`${UrlAPI}?location=${location}`);
+      const response = await axios.get(`${UrlAPI}?location=${newLocation}`);
       setContents(response.data.contents);
     } catch (error) {
       console.error('Error al obtener archivos y directorios:', error);
@@ -38,16 +40,33 @@ const FileList = () => {
   useEffect(() => {
     listFilesAndDirectories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+    setLocationHistory([...locationHistory, location]);
   }, []); // El segundo argumento [] significa que este efecto se ejecuta solo al montar el componente
+
+  const handleBackClick = () => {
+    console.log('Historial: ', locationHistory);
+    if (locationHistory.length > 0) {
+      const previousLocation = locationHistory.pop();
+      console.log('Previo: ', previousLocation);
+      console.log('Actual: ', currentLocation);
+      if (previousLocation) {
+        setCurrentLocation(previousLocation);
+        listFilesAndDirectories(previousLocation);
+      }
+    }
+  };
 
   const handleLocationChange = (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setLocation(e.target.value);
+    //setCurrentLocation(location);
   };
 
   const handleListClick = () => {
     listFilesAndDirectories();
+    setLocationHistory([...locationHistory, currentLocation]);
+    setCurrentLocation(currentLocation);
   };
 
   const getIconForFile = (fileName: string) => {
@@ -59,9 +78,13 @@ const FileList = () => {
     const iconMapping = {
       pdf: 'bi bi-file-earmark-pdf',
       docx: 'bi bi-file-earmark-word',
+      mp3: 'bi bi-file-earmark-music',
+      mp4: 'bi bi-file-earmark-play',
       xls: 'bi bi-file-earmark-excel',
       txt: 'bi bi-filetype-txt',
       zip: 'bi bi-file-earmark-zip',
+      sql: 'bi bi-filetype-sql',
+      html: 'bi bi-filetype-html',
       py: 'bi bi-filetype-py',
       '': isImageExtension ? 'bi bi-file-earmark-image' : 'bi bi-file-earmark',
       //png: 'bi bi-file-earmark-image',
@@ -70,6 +93,17 @@ const FileList = () => {
 
     return iconMapping[fileExtension] ?? defaultExtension;
   };
+
+  const BtnBack = (
+    <Button
+      variant="outline-secondary"
+      id="button-addon2"
+      onClick={handleBackClick}
+      disabled={locationHistory.length <= 1}
+    >
+      <i className="bi bi-arrow-left"></i> Back
+    </Button>
+  );
 
   const BtnDownload = (
     <Button title="Download a File">
@@ -106,6 +140,7 @@ const FileList = () => {
 
   const FormSearch = (
     <InputGroup className="mb-2">
+      {BtnBack}
       <Form.Control
         placeholder="Recipient's username"
         aria-label="Recipient's username"
@@ -127,6 +162,8 @@ const FileList = () => {
     <>
       <h2>Files & Directories List</h2>
       <br />
+      <b>Current location: </b> {currentLocation}
+      <br />
       <ButtonToolbar
         className="justify-content-between"
         aria-label="Toolbar with Button groups"
@@ -139,7 +176,6 @@ const FileList = () => {
 
         {FormSearch}
       </ButtonToolbar>
-
       <Table responsive="lg">
         <thead>
           <tr>
@@ -159,12 +195,23 @@ const FileList = () => {
                 <td>{index + 1}</td>
                 <td>
                   {item.type === 'Directory' ? (
-                    <i className="bi bi-folder-fill"></i>
+                    <a href={`/${item.name}`}>
+                      <i className="bi bi-folder-fill"></i> {item.name}
+                    </a>
                   ) : (
-                    // <i className="bi bi-file-earmark"></i>
-                    <i className={getIconForFile(item.name)}></i>
-                  )}{' '}
-                  {item.name}
+                    // <Button
+                    //   href="#"
+                    //   variant="outline-primary"
+                    //   onClick={listFilesAndDirectories(
+                    //     `${location}/${item.name}`
+                    //   )}
+                    // >
+                    //   <i className="bi bi-folder-fill"></i> {item.name}
+                    // </Button>
+                    <>
+                      <i className={getIconForFile(item.name)}></i> {item.name}
+                    </>
+                  )}
                 </td>
                 <td>{item.type}</td>
                 <td>{item.owner}</td>
@@ -176,12 +223,10 @@ const FileList = () => {
           })}
         </tbody>
       </Table>
-
       <p>Content: {contents.length} elements</p>
-
       {ModalFileUpload}
     </>
   );
 };
 
-export default FileList;
+export default FileListComponent;

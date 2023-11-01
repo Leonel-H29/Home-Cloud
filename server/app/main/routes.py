@@ -31,7 +31,7 @@ def list_files_and_directories(location: str = "."):
         contents_info = []
         for item in all_contents:
             info = stat(item)
-            print(info)
+            #print(info)
             created = datetime.fromtimestamp(info.st_ctime)
             last_modified = datetime.fromtimestamp(info.st_mtime)
             size = get_size(item) if path.isdir(item) else info.st_size
