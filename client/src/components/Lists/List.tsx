@@ -18,41 +18,50 @@ interface Item {
 }
 
 const FileListComponent = () => {
-  const [location, setLocation] = useState('./');
+  const [location, setLocation] = useState('.');
   const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>('.');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  useEffect(() => {
+    //console.log('Historial: ', locationHistory);
+    listFilesAndDirectories();
+    //setCurrentLocation(location);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    //setLocationHistory([...locationHistory, location]);
+  }, []); // El segundo argumento [] significa que este efecto se ejecuta solo al montar el componente
 
   const listFilesAndDirectories = async (newLocation: string = location) => {
     try {
       const response = await axios.get(`${UrlAPI}?location=${newLocation}`);
       setContents(response.data.contents);
+      setLocationHistory([...locationHistory, newLocation]);
+      setCurrentLocation(newLocation);
     } catch (error) {
       console.error('Error al obtener archivos y directorios:', error);
+      setErrorMessage('Location Not Found');
+      setShowErrorModal(true);
     }
+  };
+
+  const handleDirectoryClick = (newLocation: string) => {
+    listFilesAndDirectories(newLocation);
+    setLocationHistory([...locationHistory, location]);
   };
 
   const handleCreateFileClick = () => {
     setShowModalCreateFile(true);
   };
 
-  useEffect(() => {
-    listFilesAndDirectories();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    setLocationHistory([...locationHistory, location]);
-  }, []); // El segundo argumento [] significa que este efecto se ejecuta solo al montar el componente
-
   const handleBackClick = () => {
-    console.log('Historial: ', locationHistory);
-    if (locationHistory.length > 0) {
-      const previousLocation = locationHistory.pop();
-      console.log('Previo: ', previousLocation);
-      console.log('Actual: ', currentLocation);
-      if (previousLocation) {
-        setCurrentLocation(previousLocation);
-        listFilesAndDirectories(previousLocation);
-      }
+    if (locationHistory.length > 1) {
+      locationHistory.pop();
+      const previousLocation = locationHistory[locationHistory.length - 1];
+      setCurrentLocation(previousLocation);
+      listFilesAndDirectories(previousLocation);
     }
   };
 
@@ -93,6 +102,8 @@ const FileListComponent = () => {
 
     return iconMapping[fileExtension] ?? defaultExtension;
   };
+
+  /* BUTTONS */
 
   const BtnBack = (
     <Button
@@ -158,24 +169,27 @@ const FileListComponent = () => {
     </InputGroup>
   );
 
-  return (
-    <>
-      <h2>Files & Directories List</h2>
-      <br />
-      <b>Current location: </b> {currentLocation}
-      <br />
-      <ButtonToolbar
-        className="justify-content-between"
-        aria-label="Toolbar with Button groups"
-      >
-        <ButtonGroup className="mb-2">
-          {BtnPlusFile}
-          {BtnPlusDirectory}
-          {BtnDownload}
-        </ButtonGroup>
+  const ErrorModal = (
+    <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Error</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>{errorMessage}</Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
 
-        {FormSearch}
-      </ButtonToolbar>
+  const TableDirsFiles = (
+    <div
+      style={{
+        overflowY: contents.length > 10 ? 'scroll' : 'auto',
+        maxHeight: '31.25rem',
+      }}
+    >
       <Table responsive="lg">
         <thead>
           <tr>
@@ -195,19 +209,16 @@ const FileListComponent = () => {
                 <td>{index + 1}</td>
                 <td>
                   {item.type === 'Directory' ? (
-                    <a href={`/${item.name}`}>
+                    <Button
+                      href="#"
+                      variant="outline-primary"
+                      onClick={() =>
+                        handleDirectoryClick(`${currentLocation}/${item.name}`)
+                      }
+                    >
                       <i className="bi bi-folder-fill"></i> {item.name}
-                    </a>
+                    </Button>
                   ) : (
-                    // <Button
-                    //   href="#"
-                    //   variant="outline-primary"
-                    //   onClick={listFilesAndDirectories(
-                    //     `${location}/${item.name}`
-                    //   )}
-                    // >
-                    //   <i className="bi bi-folder-fill"></i> {item.name}
-                    // </Button>
                     <>
                       <i className={getIconForFile(item.name)}></i> {item.name}
                     </>
@@ -223,8 +234,31 @@ const FileListComponent = () => {
           })}
         </tbody>
       </Table>
+    </div>
+  );
+
+  return (
+    <>
+      <h2>Files & Directories List</h2>
+      <br />
+      <b>Current location: </b> {currentLocation}
+      <br />
+      <ButtonToolbar
+        className="justify-content-between"
+        aria-label="Toolbar with Button groups"
+      >
+        <ButtonGroup className="mb-2">
+          {BtnPlusFile}
+          {BtnPlusDirectory}
+          {BtnDownload}
+        </ButtonGroup>
+
+        {FormSearch}
+      </ButtonToolbar>
+      {TableDirsFiles}
       <p>Content: {contents.length} elements</p>
       {ModalFileUpload}
+      {ErrorModal}
     </>
   );
 };
