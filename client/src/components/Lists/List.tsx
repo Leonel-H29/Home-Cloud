@@ -3,7 +3,14 @@ import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import { ButtonToolbar, Form, InputGroup, Modal } from 'react-bootstrap';
+import {
+  Alert,
+  ButtonToolbar,
+  Form,
+  InputGroup,
+  Modal,
+  Spinner,
+} from 'react-bootstrap';
 import FileUpload from '../Files/FileUpload';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
@@ -23,33 +30,38 @@ const FileListComponent = () => {
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>('.');
-  const [showErrorModal, setShowErrorModal] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    //console.log('Historial: ', locationHistory);
     listFilesAndDirectories();
-    //setCurrentLocation(location);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    //setLocationHistory([...locationHistory, location]);
-  }, []); // El segundo argumento [] significa que este efecto se ejecuta solo al montar el componente
+  }, []);
 
   const listFilesAndDirectories = async (newLocation: string = location) => {
+    setLoading(true);
+    setError('');
+
     try {
       const response = await axios.get(`${UrlAPI}?location=${newLocation}`);
       setContents(response.data.contents);
       setLocationHistory([...locationHistory, newLocation]);
       setCurrentLocation(newLocation);
+      console.log('Actual: ', currentLocation);
+      console.log('Historial:', locationHistory);
     } catch (error) {
-      console.error('Error al obtener archivos y directorios:', error);
-      setErrorMessage('Location Not Found');
-      setShowErrorModal(true);
+      setError('Error getting files and directories');
+    } finally {
+      setLoading(false);
     }
   };
 
+  /* HANDLES */
+
   const handleDirectoryClick = (newLocation: string) => {
     listFilesAndDirectories(newLocation);
-    setLocationHistory([...locationHistory, location]);
+    //setLocationHistory([...locationHistory, location]);
+    //console.log('Historial: ', locationHistory);
   };
 
   const handleCreateFileClick = () => {
@@ -57,12 +69,14 @@ const FileListComponent = () => {
   };
 
   const handleBackClick = () => {
-    if (locationHistory.length > 1) {
+    if (locationHistory.length > 0) {
       locationHistory.pop();
       const previousLocation = locationHistory[locationHistory.length - 1];
+      console.log('Previo: ', previousLocation);
       setCurrentLocation(previousLocation);
       listFilesAndDirectories(previousLocation);
     }
+    //console.log('Historial: ', locationHistory);
   };
 
   const handleLocationChange = (e: {
@@ -74,8 +88,9 @@ const FileListComponent = () => {
 
   const handleListClick = () => {
     listFilesAndDirectories();
-    setLocationHistory([...locationHistory, currentLocation]);
-    setCurrentLocation(currentLocation);
+    //setLocationHistory([...locationHistory, currentLocation]);
+    //setCurrentLocation(currentLocation);
+    //console.log('Historial: ', locationHistory);
   };
 
   const getIconForFile = (fileName: string) => {
@@ -169,20 +184,6 @@ const FileListComponent = () => {
     </InputGroup>
   );
 
-  const ErrorModal = (
-    <Modal show={showErrorModal} onHide={() => setShowErrorModal(false)}>
-      <Modal.Header closeButton>
-        <Modal.Title>Error</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>{errorMessage}</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowErrorModal(false)}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-  );
-
   const TableDirsFiles = (
     <div
       style={{
@@ -234,6 +235,7 @@ const FileListComponent = () => {
           })}
         </tbody>
       </Table>
+      <p>Content: {contents.length} elements</p>
     </div>
   );
 
@@ -255,10 +257,19 @@ const FileListComponent = () => {
 
         {FormSearch}
       </ButtonToolbar>
-      {TableDirsFiles}
-      <p>Content: {contents.length} elements</p>
+      {loading && (
+        <div className="display-flex">
+          <Spinner animation="border" role="status" />
+          &nbsp;
+          <span className="sr-only">Loading..</span>
+          <br />
+          <br />
+          Wait a seconds
+        </div>
+      )}
+      {error && <Alert variant="danger">{error}</Alert>}
+      {!loading && !error && TableDirsFiles}
       {ModalFileUpload}
-      {ErrorModal}
     </>
   );
 };
