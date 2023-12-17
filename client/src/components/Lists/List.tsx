@@ -26,8 +26,10 @@ interface Item {
   size: string;
 }
 
+const defaultLocation: string = '/home';
+
 const FileListComponent = () => {
-  const [location, setLocation] = useState('.');
+  const [location, setLocation] = useState(defaultLocation);
   const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
@@ -40,6 +42,20 @@ const FileListComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    console.log('Local History: ', locationHistory);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  const updateLocationHistory = (newLocation: string) => {
+    const lastLocation = locationHistory[locationHistory.length - 1];
+    if (lastLocation !== newLocation) {
+      const updatedHistory = [...locationHistory, newLocation];
+      setLocationHistory(updatedHistory);
+      localStorage.setItem('locationHistory', JSON.stringify(updatedHistory));
+    }
+  };
+
   const listFilesAndDirectories = async (newLocation: string = location) => {
     setLoading(true);
     setError('');
@@ -47,10 +63,10 @@ const FileListComponent = () => {
     try {
       const response = await axios.get(`${UrlAPI}?location=${newLocation}`);
       setContents(response.data.contents);
-      setLocationHistory([...locationHistory, newLocation]);
+      //setLocationHistory([...locationHistory, newLocation]);
+      updateLocationHistory(newLocation);
       setCurrentLocation(newLocation);
       console.log('Actual: ', currentLocation);
-      console.log('Historial:', locationHistory);
     } catch (error) {
       setError('Error getting files and directories');
     } finally {
@@ -62,8 +78,6 @@ const FileListComponent = () => {
 
   const handleDirectoryClick = (newLocation: string) => {
     listFilesAndDirectories(newLocation);
-    //setLocationHistory([...locationHistory, location]);
-    //console.log('Historial: ', locationHistory);
   };
 
   const handleCreateFileClick = () => {
@@ -71,28 +85,27 @@ const FileListComponent = () => {
   };
 
   const handleBackClick = () => {
-    if (locationHistory.length > 0) {
-      locationHistory.pop();
-      const previousLocation = locationHistory[locationHistory.length - 1];
-      console.log('Previo: ', previousLocation);
-      setCurrentLocation(previousLocation);
-      listFilesAndDirectories(previousLocation);
+    if (locationHistory.length == 0) {
+      setCurrentLocation(defaultLocation);
+      listFilesAndDirectories(defaultLocation);
     }
-    //console.log('Historial: ', locationHistory);
+
+    locationHistory.pop();
+    const previousLocation = locationHistory[locationHistory.length - 1];
+    console.log('Previo: ', previousLocation);
+    setCurrentLocation(previousLocation);
+    listFilesAndDirectories(previousLocation);
+    setLocationHistory(locationHistory);
   };
 
   const handleLocationChange = (e: {
     target: { value: React.SetStateAction<string> };
   }) => {
     setLocation(e.target.value);
-    //setCurrentLocation(location);
   };
 
   const handleListClick = () => {
     listFilesAndDirectories();
-    //setLocationHistory([...locationHistory, currentLocation]);
-    //setCurrentLocation(currentLocation);
-    //console.log('Historial: ', locationHistory);
   };
 
   /* BUTTONS */
