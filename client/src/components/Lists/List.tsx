@@ -8,6 +8,7 @@ import getIconForFile from '../../hooks/Icon';
 import {
   Alert,
   ButtonToolbar,
+  Dropdown,
   Form,
   InputGroup,
   Modal,
@@ -33,7 +34,7 @@ const FileListComponent = () => {
   const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
-  const [currentLocation, setCurrentLocation] = useState<string>('.');
+  const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -127,16 +128,53 @@ const FileListComponent = () => {
     </Button>
   );
 
-  const BtnPlusFile = (
-    <Button title="Upload a file" onClick={handleCreateFileClick}>
-      <i className="bi bi-file-earmark-plus"></i>
+  const BtnRefresh = (
+    <Button
+      title="Refresh"
+      onClick={() => listFilesAndDirectories(currentLocation)}
+    >
+      <i className="bi bi-arrow-clockwise"></i>
     </Button>
   );
 
+  const BtnPlusFile = (
+    <Dropdown as={ButtonGroup}>
+      <Dropdown.Toggle split id="dropdown-split-basic">
+        <i className="bi bi-file-earmark-plus"></i>{' '}
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item
+          onClick={handleCreateFileClick}
+          title="Upload a exists file"
+        >
+          Upload a exists file
+        </Dropdown.Item>
+        <Dropdown.Item href="#" title="Create a new file">
+          Create a new file
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+
   const BtnPlusDirectory = (
-    <Button title="Upload a Directory">
-      <i className="bi bi-folder-plus"></i>
-    </Button>
+    <Dropdown as={ButtonGroup}>
+      <Dropdown.Toggle split id="dropdown-split-basic">
+        <i className="bi bi-folder-plus"></i>{' '}
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item
+          onClick={handleCreateFileClick}
+          title="Upload a exists directory"
+        >
+          Upload a exists directory
+        </Dropdown.Item>
+        <Dropdown.Item href="#" title="Create a new directory">
+          Create a new directory
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 
   const ModalFileUpload = (
@@ -150,6 +188,7 @@ const FileListComponent = () => {
       <FileUpload
         showModal={showModalCreateFile}
         setShowModal={setShowModalCreateFile}
+        uploadLocation={currentLocation}
       />
     </Modal>
   );
@@ -240,6 +279,7 @@ const FileListComponent = () => {
         aria-label="Toolbar with Button groups"
       >
         <ButtonGroup className="mb-2">
+          {BtnRefresh}
           {BtnPlusFile}
           {BtnPlusDirectory}
           {BtnDownload}

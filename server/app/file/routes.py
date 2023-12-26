@@ -1,7 +1,6 @@
-from fastapi import APIRouter, UploadFile, File
+from fastapi import APIRouter, UploadFile, File, Query
 from fastapi.responses import FileResponse, JSONResponse
-from os import getcwd, remove
-
+from os import getcwd, remove, path
 
 
 URL = '/api/file'
@@ -10,9 +9,9 @@ router = APIRouter()
 
 
 @router.post(URL + "/upload")
-async def upload_file(file: UploadFile= File(...)):
+async def upload_file(file: UploadFile = File(...), location: str = Query(".")):
 
-    file_dir = getcwd() + "/" + file.filename
+    file_dir = path.join(getcwd(), location, file.filename)
     with open(file_dir, "wb") as Myfile:
         content = await file.read()
         Myfile.write(content)

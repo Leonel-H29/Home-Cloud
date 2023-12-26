@@ -7,12 +7,18 @@ const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
 interface FileUploadProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  uploadLocation: string;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ showModal, setShowModal }) => {
+const FileUpload: React.FC<FileUploadProps> = ({
+  showModal,
+  setShowModal,
+  uploadLocation,
+}) => {
   const [file, setFile] = useState<File | null>(null);
 
   console.log(UrlAPI);
+  console.log('CURRENT: ', uploadLocation);
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -21,14 +27,19 @@ const FileUpload: React.FC<FileUploadProps> = ({ showModal, setShowModal }) => {
   };
 
   const handleFileUpload = async () => {
-    if (file && showModal) {
+    if (uploadLocation && file && showModal) {
       try {
         const formData = new FormData();
+
         formData.append('file', file);
 
-        await axios.post(UrlAPI + '/upload', formData, {
-          withCredentials: false,
-        });
+        await axios.post(
+          UrlAPI + `/upload?location=${uploadLocation}`,
+          formData,
+          {
+            withCredentials: false,
+          }
+        );
 
         alert('File uploaded successfully!');
         setShowModal(false); // Cerramos el modal después de subir el archivo
