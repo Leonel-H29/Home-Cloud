@@ -15,6 +15,7 @@ import {
   Spinner,
 } from 'react-bootstrap';
 import FileUpload from '../Files/FileUpload';
+import FileCreate from '../Files/FileCreate';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
@@ -33,6 +34,7 @@ const FileListComponent = () => {
   const [location, setLocation] = useState(defaultLocation);
   const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
+  const [showModalUploadFile, setShowModalUploadFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
@@ -83,6 +85,10 @@ const FileListComponent = () => {
 
   const handleCreateFileClick = () => {
     setShowModalCreateFile(true);
+  };
+
+  const handleUploadFileClick = () => {
+    setShowModalUploadFile(true);
   };
 
   const handleBackClick = () => {
@@ -139,18 +145,22 @@ const FileListComponent = () => {
 
   const BtnPlusFile = (
     <Dropdown as={ButtonGroup}>
-      <Dropdown.Toggle split id="dropdown-split-basic">
+      <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
         <i className="bi bi-file-earmark-plus"></i>{' '}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
         <Dropdown.Item
-          onClick={handleCreateFileClick}
+          onClick={handleUploadFileClick}
           title="Upload a exists file"
         >
           Upload a exists file
         </Dropdown.Item>
-        <Dropdown.Item href="#" title="Create a new file">
+        <Dropdown.Item
+          href="#"
+          title="Create a new file"
+          onClick={handleCreateFileClick}
+        >
           Create a new file
         </Dropdown.Item>
       </Dropdown.Menu>
@@ -159,15 +169,16 @@ const FileListComponent = () => {
 
   const BtnPlusDirectory = (
     <Dropdown as={ButtonGroup}>
-      <Dropdown.Toggle split id="dropdown-split-basic">
+      <Dropdown.Toggle
+        split
+        id="dropdown-split-basic"
+        title="Directories options"
+      >
         <i className="bi bi-folder-plus"></i>{' '}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        <Dropdown.Item
-          onClick={handleCreateFileClick}
-          title="Upload a exists directory"
-        >
+        <Dropdown.Item title="Upload a exists directory">
           Upload a exists directory
         </Dropdown.Item>
         <Dropdown.Item href="#" title="Create a new directory">
@@ -179,16 +190,32 @@ const FileListComponent = () => {
 
   const ModalFileUpload = (
     <Modal
-      show={showModalCreateFile}
-      onHide={() => setShowModalCreateFile(false)}
+      show={showModalUploadFile}
+      onHide={() => setShowModalUploadFile(false)}
     >
       <Modal.Header closeButton>
         <Modal.Title>Upload a new file</Modal.Title>
       </Modal.Header>
       <FileUpload
+        showModal={showModalUploadFile}
+        setShowModal={setShowModalUploadFile}
+        uploadLocation={currentLocation}
+      />
+    </Modal>
+  );
+
+  const ModalFileCreate = (
+    <Modal
+      show={showModalCreateFile}
+      onHide={() => setShowModalCreateFile(false)}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Create a new file</Modal.Title>
+      </Modal.Header>
+      <FileCreate
         showModal={showModalCreateFile}
         setShowModal={setShowModalCreateFile}
-        uploadLocation={currentLocation}
+        createLocation={currentLocation}
       />
     </Modal>
   );
@@ -232,6 +259,7 @@ const FileListComponent = () => {
             <th>Size</th>
           </tr>
         </thead>
+
         <tbody>
           {contents.map((item, index) => {
             return (
@@ -299,6 +327,7 @@ const FileListComponent = () => {
       )}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && TableDirsFiles}
+      {ModalFileCreate}
       {ModalFileUpload}
     </>
   );

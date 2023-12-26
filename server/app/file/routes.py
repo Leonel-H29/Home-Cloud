@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Query
+from fastapi import APIRouter, UploadFile, File, Query, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
 from os import getcwd, remove, path
 
@@ -6,6 +6,22 @@ from os import getcwd, remove, path
 URL = '/api/file'
 
 router = APIRouter()
+
+
+@router.post(URL + "/create")
+async def create_file(name: str, extension: str, location: str = Query(".")):
+    file_name = f"{name}.{extension}"
+    file_path = path.join(getcwd(), location, file_name)
+
+    try:
+        with open(file_path, "w") as new_file:
+            new_file.write("")
+        return JSONResponse(content={
+            "message": f"File '{file_name}' created successfully in '{location}'.",
+            "path": file_path
+        }, status_code=201)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create file: {str(e)}")
 
 
 @router.post(URL + "/upload")
