@@ -250,6 +250,7 @@ const FileListComponent = () => {
       <Table responsive="lg">
         <thead>
           <tr>
+            <th></th>
             <th>#</th>
             <th>Name</th>
             <th>Type</th>
@@ -264,6 +265,11 @@ const FileListComponent = () => {
           {contents.map((item, index) => {
             return (
               <tr key={index}>
+                <td>
+                  <>
+                    <Form.Check type="radio" aria-label="radio 1" />
+                  </>
+                </td>
                 <td>{index + 1}</td>
                 <td>
                   {item.type === 'Directory' ? (
@@ -319,7 +325,7 @@ const FileListComponent = () => {
         <div className="display-flex">
           <Spinner animation="border" role="status" />
           &nbsp;
-          <span className="sr-only">Loading..</span>
+          <span className="sr-only">Loading...</span>
           <br />
           <br />
           Wait a seconds
