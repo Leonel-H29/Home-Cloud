@@ -8,12 +8,14 @@ interface CreateFileModalProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   createLocation: string;
+  updateList: () => void;
 }
 
 const FileCreate: React.FC<CreateFileModalProps> = ({
   showModal,
   setShowModal,
   createLocation,
+  updateList,
 }) => {
   const [fileName, setFileName] = useState('');
   const [fileExtension, setFileExtension] = useState('');

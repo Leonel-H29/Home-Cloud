@@ -200,6 +200,7 @@ const FileListComponent = () => {
         showModal={showModalUploadFile}
         setShowModal={setShowModalUploadFile}
         uploadLocation={currentLocation}
+        updateList={listFilesAndDirectories}
       />
     </Modal>
   );
@@ -216,8 +217,39 @@ const FileListComponent = () => {
         showModal={showModalCreateFile}
         setShowModal={setShowModalCreateFile}
         createLocation={currentLocation}
+        updateList={listFilesAndDirectories}
       />
     </Modal>
+  );
+
+  const BtnConfig = (
+    <Dropdown as={ButtonGroup}>
+      <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
+        <i className="bi bi-gear"></i>{' '}
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu>
+        <Dropdown.Item
+          //onClick={handleUploadFileClick}
+          title="Rename"
+        >
+          Remane
+        </Dropdown.Item>
+        <Dropdown.Item
+          //onClick={handleUploadFileClick}
+          title="Move"
+        >
+          Move
+        </Dropdown.Item>
+        <Dropdown.Item
+          //href="#"
+          title="Delete"
+          //onClick={handleCreateFileClick}
+        >
+          Delete
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
   );
 
   const FormSearch = (
@@ -258,6 +290,7 @@ const FileListComponent = () => {
             <th>Created</th>
             <th>Date Last Updated</th>
             <th>Size</th>
+            <th></th>
           </tr>
         </thead>
 
@@ -293,6 +326,7 @@ const FileListComponent = () => {
                 <td>{item.created}</td>
                 <td>{item.last_modified}</td>
                 <td>{item.size}</td>
+                <td>{BtnConfig}</td>
               </tr>
             );
           })}
