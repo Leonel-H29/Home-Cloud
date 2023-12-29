@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
+import Swal from 'sweetalert2';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
 
@@ -8,7 +9,7 @@ interface CreateFileModalProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   createLocation: string;
-  updateList: () => void;
+  updateList: (location: string) => void;
 }
 
 const FileCreate: React.FC<CreateFileModalProps> = ({
@@ -34,10 +35,27 @@ const FileCreate: React.FC<CreateFileModalProps> = ({
         withCredentials: false,
       });
 
-      alert(`Archivo creado correctamente.`);
+      //alert(`Archivo creado correctamente.`);
       setShowModal(false);
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: `The file created successfully!`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.error('Error al crear el archivo:', error);
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: `Error creating file!`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      console.error('Error creating file!: ', error);
+    } finally {
+      //setShowModal(false);
+      updateList(createLocation);
     }
   };
 

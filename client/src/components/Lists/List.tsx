@@ -28,7 +28,7 @@ interface Item {
   size: string;
 }
 
-const defaultLocation: string = '/home';
+const defaultLocation: string = import.meta.env.VITE_DEFAULT_LOCATION;
 
 const FileListComponent = () => {
   const [location, setLocation] = useState(defaultLocation);

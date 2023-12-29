@@ -9,7 +9,7 @@ interface FileUploadProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   uploadLocation: string;
-  updateList: () => void;
+  updateList: (location: string) => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
