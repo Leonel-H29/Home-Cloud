@@ -10,12 +10,14 @@ import {
   ButtonToolbar,
   Dropdown,
   Form,
+  FormControl,
   InputGroup,
   Modal,
   Spinner,
 } from 'react-bootstrap';
 import FileUpload from '../Files/FileUpload';
 import FileCreate from '../Files/FileCreate';
+import FileRename from '../Files/FileRename';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
@@ -35,10 +37,13 @@ const FileListComponent = () => {
   const [contents, setContents] = useState<Item[]>([]);
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [showModalUploadFile, setShowModalUploadFile] = useState(false);
+  const [showModalRenameFile, setShowModalRenameFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [selected, setSelected] = useState<string[]>([]);
+  const [filter, setFilter] = useState('');
 
   useEffect(() => {
     listFilesAndDirectories();
@@ -46,7 +51,18 @@ const FileListComponent = () => {
   }, []);
 
   useEffect(() => {
+    setSelected([]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     console.log('Local History: ', locationHistory);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  });
+
+  useEffect(() => {
+    console.log('Selected: ', selected);
+    //console.log('Selected 0: ', selected[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 
@@ -74,6 +90,7 @@ const FileListComponent = () => {
       setError('Error getting files and directories');
     } finally {
       setLoading(false);
+      setSelected([]);
     }
   };
 
@@ -89,6 +106,17 @@ const FileListComponent = () => {
 
   const handleUploadFileClick = () => {
     setShowModalUploadFile(true);
+  };
+
+  const handleRenameFileClick = () => {
+    setShowModalRenameFile(true);
+  };
+
+  const handleSelectedClick = (name: string) => {
+    const updatedSelected = selected.includes(name)
+      ? selected.filter((item) => item !== name)
+      : [...selected, name];
+    setSelected(updatedSelected);
   };
 
   const handleBackClick = () => {
@@ -114,6 +142,14 @@ const FileListComponent = () => {
   const handleListClick = () => {
     listFilesAndDirectories();
   };
+
+  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilter(e.target.value);
+  };
+
+  const filteredContents = contents.filter((item) =>
+    item.name.toLowerCase().includes(filter.toLowerCase())
+  );
 
   /* BUTTONS */
 
@@ -222,18 +258,33 @@ const FileListComponent = () => {
     </Modal>
   );
 
+  const ModalFileRename = (
+    <Modal
+      show={showModalRenameFile}
+      onHide={() => setShowModalRenameFile(false)}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Rename file</Modal.Title>
+      </Modal.Header>
+      <FileRename
+        showModal={showModalRenameFile}
+        setShowModal={setShowModalRenameFile}
+        file={selected[0]}
+        location={currentLocation}
+        updateList={listFilesAndDirectories}
+      />
+    </Modal>
+  );
+
   const BtnConfig = (
-    <Dropdown as={ButtonGroup}>
+    <Dropdown as={ButtonGroup} hidden={selected.length != 1}>
       <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
         <i className="bi bi-gear"></i>{' '}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        <Dropdown.Item
-          //onClick={handleUploadFileClick}
-          title="Rename"
-        >
-          Remane
+        <Dropdown.Item onClick={handleRenameFileClick} title="Rename">
+          Rename
         </Dropdown.Item>
         <Dropdown.Item
           //onClick={handleUploadFileClick}
@@ -272,6 +323,18 @@ const FileListComponent = () => {
     </InputGroup>
   );
 
+  const FilterInput = (
+    <InputGroup className="mb-3">
+      <InputGroup.Text id="inputGroup-sizing-default">Filter</InputGroup.Text>
+      <FormControl
+        aria-label="Default"
+        aria-describedby="inputGroup-sizing-default"
+        value={filter}
+        onChange={handleFilterChange}
+      />
+    </InputGroup>
+  );
+
   const TableDirsFiles = (
     <div
       style={{
@@ -295,12 +358,16 @@ const FileListComponent = () => {
         </thead>
 
         <tbody>
-          {contents.map((item, index) => {
+          {filteredContents.map((item, index) => {
             return (
               <tr key={index}>
                 <td>
                   <>
-                    <Form.Check type="radio" aria-label="radio 1" />
+                    <Form.Check
+                      type="checkbox"
+                      value={selected}
+                      onClick={() => handleSelectedClick(item.name)}
+                    />
                   </>
                 </td>
                 <td>{index + 1}</td>
@@ -355,6 +422,9 @@ const FileListComponent = () => {
 
         {FormSearch}
       </ButtonToolbar>
+      <br />
+      {FilterInput}
+      <br />
       {loading && (
         <div className="display-flex">
           <Spinner animation="border" role="status" />
@@ -369,6 +439,7 @@ const FileListComponent = () => {
       {!loading && !error && TableDirsFiles}
       {ModalFileCreate}
       {ModalFileUpload}
+      {ModalFileRename}
     </>
   );
 };
