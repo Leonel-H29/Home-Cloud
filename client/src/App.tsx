@@ -1,30 +1,55 @@
 import './App.css';
-
-//import FileMain from './components/Files/FileMain';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import FileListComponent from './components/Lists/List';
+import TerminalComponent from './components/Terminal/Terminal';
 import NavBarComponent from './components/NavBar/NavBar';
-//import DirectoryUpload from './components/Directories/DirectoryUpload';
+import { Card, Nav } from 'react-bootstrap';
 
 function App() {
-  //const [count, setCount] = useState(0)
-
   return (
-    <>
+    <BrowserRouter>
       <NavBarComponent />
       <br />
       <h1>File Home Server</h1>
       <br />
       <br />
-      <div className="card">
-        <FileListComponent />
-      </div>
-      {/* <div className="card">
-        <FileMain />
-      </div>
-      <div className="card">
-        <DirectoryUpload />
-      </div> */}
-    </>
+      <Card>
+        <Card.Header>
+          <Nav variant="pills">
+            <Nav.Item>
+              <Nav.Link
+                href="/interface"
+                className={
+                  location.pathname === '/interface'
+                    ? 'nav-link active'
+                    : 'nav-link'
+                }
+              >
+                Interface
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item>
+              <Nav.Link
+                href="/shell"
+                className={
+                  location.pathname === '/shell'
+                    ? 'nav-link active'
+                    : 'nav-link'
+                }
+              >
+                Terminal
+              </Nav.Link>
+            </Nav.Item>
+          </Nav>
+        </Card.Header>
+        <Card.Body>
+          <Routes>
+            <Route path="/interface" element={<FileListComponent />} />
+            <Route path="/shell" element={<TerminalComponent />} />
+          </Routes>
+        </Card.Body>
+      </Card>
+    </BrowserRouter>
   );
 }
 
