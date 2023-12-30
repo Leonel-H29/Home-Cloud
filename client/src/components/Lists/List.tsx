@@ -19,6 +19,7 @@ import FileUpload from '../Files/FileUpload';
 import FileCreate from '../Files/FileCreate';
 import FileRename from '../Files/FileRename';
 import FileMove from '../Files/FileMove';
+import FileDelete from '../Files/FileDelete';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
@@ -40,6 +41,7 @@ const FileListComponent = () => {
   const [showModalUploadFile, setShowModalUploadFile] = useState(false);
   const [showModalRenameFile, setShowModalRenameFile] = useState(false);
   const [showModalMoveFile, setShowModalMoveFile] = useState(false);
+  const [showModalDeleteFile, setShowModalDeleteFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
@@ -116,6 +118,10 @@ const FileListComponent = () => {
 
   const handleMoveFileClick = () => {
     setShowModalMoveFile(true);
+  };
+
+  const handleDeleteFileClick = () => {
+    setShowModalDeleteFile(true);
   };
 
   const handleSelectedClick = (name: string) => {
@@ -297,6 +303,24 @@ const FileListComponent = () => {
     </Modal>
   );
 
+  const ModalFileDelete = (
+    <Modal
+      show={showModalDeleteFile}
+      onHide={() => setShowModalDeleteFile(false)}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Delete file</Modal.Title>
+      </Modal.Header>
+      <FileDelete
+        showModal={showModalDeleteFile}
+        setShowModal={setShowModalDeleteFile}
+        file={selected[0]}
+        location={currentLocation}
+        updateList={listFilesAndDirectories}
+      />
+    </Modal>
+  );
+
   const BtnConfig = (
     <Dropdown as={ButtonGroup} hidden={selected.length != 1}>
       <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
@@ -313,7 +337,7 @@ const FileListComponent = () => {
         <Dropdown.Item
           //href="#"
           title="Delete"
-          //onClick={handleCreateFileClick}
+          onClick={handleDeleteFileClick}
         >
           Delete
         </Dropdown.Item>
@@ -459,6 +483,7 @@ const FileListComponent = () => {
       {ModalFileUpload}
       {ModalFileRename}
       {ModalFileMove}
+      {ModalFileDelete}
     </>
   );
 };

@@ -108,12 +108,12 @@ def download_file(name_file: str):
 
 
 @router.delete(URL + "/delete/{name_file}")
-def delete_file(name_file: str):
+def delete_file(name_file: str, location: str = Query(".")):
     """
     Endpoint to delete one determinated file
     """
     try:
-        remove(getcwd() + "/" + name_file)
+        remove(path.join(getcwd(), location, name_file))
     except FileNotFoundError:
         return JSONResponse(content={
             "removed": False,
