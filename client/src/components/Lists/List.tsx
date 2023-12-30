@@ -18,6 +18,7 @@ import {
 import FileUpload from '../Files/FileUpload';
 import FileCreate from '../Files/FileCreate';
 import FileRename from '../Files/FileRename';
+import FileMove from '../Files/FileMove';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
@@ -38,6 +39,7 @@ const FileListComponent = () => {
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [showModalUploadFile, setShowModalUploadFile] = useState(false);
   const [showModalRenameFile, setShowModalRenameFile] = useState(false);
+  const [showModalMoveFile, setShowModalMoveFile] = useState(false);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
@@ -110,6 +112,10 @@ const FileListComponent = () => {
 
   const handleRenameFileClick = () => {
     setShowModalRenameFile(true);
+  };
+
+  const handleMoveFileClick = () => {
+    setShowModalMoveFile(true);
   };
 
   const handleSelectedClick = (name: string) => {
@@ -276,6 +282,21 @@ const FileListComponent = () => {
     </Modal>
   );
 
+  const ModalFileMove = (
+    <Modal show={showModalMoveFile} onHide={() => setShowModalMoveFile(false)}>
+      <Modal.Header closeButton>
+        <Modal.Title>Rename file</Modal.Title>
+      </Modal.Header>
+      <FileMove
+        showModal={showModalMoveFile}
+        setShowModal={setShowModalMoveFile}
+        file={selected[0]}
+        currentLocation={currentLocation}
+        updateList={listFilesAndDirectories}
+      />
+    </Modal>
+  );
+
   const BtnConfig = (
     <Dropdown as={ButtonGroup} hidden={selected.length != 1}>
       <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
@@ -286,10 +307,7 @@ const FileListComponent = () => {
         <Dropdown.Item onClick={handleRenameFileClick} title="Rename">
           Rename
         </Dropdown.Item>
-        <Dropdown.Item
-          //onClick={handleUploadFileClick}
-          title="Move"
-        >
+        <Dropdown.Item onClick={handleMoveFileClick} title="Move">
           Move
         </Dropdown.Item>
         <Dropdown.Item
@@ -399,7 +417,7 @@ const FileListComponent = () => {
           })}
         </tbody>
       </Table>
-      <p>Content: {contents.length} elements</p>
+      <p>Content: {filteredContents.length} elements</p>
     </div>
   );
 
@@ -440,6 +458,7 @@ const FileListComponent = () => {
       {ModalFileCreate}
       {ModalFileUpload}
       {ModalFileRename}
+      {ModalFileMove}
     </>
   );
 };
