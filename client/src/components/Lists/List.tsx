@@ -20,6 +20,7 @@ import FileCreate from '../Files/FileCreate';
 import FileRename from '../Files/FileRename';
 import FileMove from '../Files/FileMove';
 import FileDelete from '../Files/FileDelete';
+import DirectoryCreate from '../Directories/DirectoryCreate';
 
 const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
@@ -37,11 +38,15 @@ const defaultLocation: string = import.meta.env.VITE_DEFAULT_LOCATION;
 const FileListComponent = () => {
   const [location, setLocation] = useState(defaultLocation);
   const [contents, setContents] = useState<Item[]>([]);
+
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
   const [showModalUploadFile, setShowModalUploadFile] = useState(false);
   const [showModalRenameFile, setShowModalRenameFile] = useState(false);
   const [showModalMoveFile, setShowModalMoveFile] = useState(false);
   const [showModalDeleteFile, setShowModalDeleteFile] = useState(false);
+
+  const [showModalCreateDirs, setShowModalCreateDirs] = useState(false);
+
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
@@ -122,6 +127,10 @@ const FileListComponent = () => {
 
   const handleDeleteFileClick = () => {
     setShowModalDeleteFile(true);
+  };
+
+  const handleCreateDirsClick = () => {
+    setShowModalCreateDirs(true);
   };
 
   const handleSelectedClick = (name: string) => {
@@ -229,7 +238,11 @@ const FileListComponent = () => {
         <Dropdown.Item title="Upload a exists directory">
           Upload a exists directory
         </Dropdown.Item>
-        <Dropdown.Item href="#" title="Create a new directory">
+        <Dropdown.Item
+          href="#"
+          title="Create a new directory"
+          onClick={handleCreateDirsClick}
+        >
           Create a new directory
         </Dropdown.Item>
       </Dropdown.Menu>
@@ -315,6 +328,23 @@ const FileListComponent = () => {
         showModal={showModalDeleteFile}
         setShowModal={setShowModalDeleteFile}
         file={selected[0]}
+        location={currentLocation}
+        updateList={listFilesAndDirectories}
+      />
+    </Modal>
+  );
+
+  const ModalDirsCreate = (
+    <Modal
+      show={showModalCreateDirs}
+      onHide={() => setShowModalCreateDirs(false)}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Create a new directory</Modal.Title>
+      </Modal.Header>
+      <DirectoryCreate
+        showModal={showModalCreateDirs}
+        setShowModal={setShowModalCreateDirs}
         location={currentLocation}
         updateList={listFilesAndDirectories}
       />
@@ -451,6 +481,7 @@ const FileListComponent = () => {
       <br />
       <b>Current location: </b> {currentLocation}
       <br />
+      <br />
       <ButtonToolbar
         className="justify-content-between"
         aria-label="Toolbar with Button groups"
@@ -484,6 +515,7 @@ const FileListComponent = () => {
       {ModalFileRename}
       {ModalFileMove}
       {ModalFileDelete}
+      {ModalDirsCreate}
     </>
   );
 };

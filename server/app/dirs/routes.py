@@ -1,16 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter,  Query
 from fastapi.responses import JSONResponse
-from os import getcwd, mkdir, rmdir, rename
+from os import getcwd, mkdir, rmdir, rename, path
 
 
 URL = '/api/dirs'
 router = APIRouter()
 
 
-@router.post(URL + "/upload/{dir_name}")
-def create_directory(dir_name: str):
+@router.post(URL + "/create/{dir_name}")
+def create_directory(dir_name: str,  location: str = Query(".")):
     try:
-        mkdir(getcwd() + "/" + dir_name)
+        #mkdir(getcwd() + "/" + dir_name)
+        mkdir(path.join(getcwd(), location, dir_name))
     except FileExistsError:
         return JSONResponse(content={
             "created": False,
