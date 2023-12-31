@@ -162,3 +162,5 @@ cython_debug/
 
 # Ignorar directorio de migraciones en todas las aplicaciones
 **/migrations/
+
+*.swp
