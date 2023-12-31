@@ -1,23 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './Terminal.css';
+import { TerminalClass } from '../Class/TerminalClass';
+
 const TerminalComponent = () => {
   const [command, setCommand] = useState('');
   const [output, setOutput] = useState('');
 
-  const handleCommand = async () => {
-    // Lógica para ejecutar comandos
-    try {
-      // Ejemplo: ejecución de un comando 'ls'
-      const response = await fetch('/api/execute-command', {
-        method: 'POST',
-        body: JSON.stringify({ command }), // Envía el comando al servidor
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+  const IShell = new TerminalClass();
 
-      const data = await response.json();
-      setOutput(data.output); // Establece la salida del comando
+  const handleCommand = async () => {
+    try {
+      const data = IShell.Command(command);
+      //console.log('Response: ', response);
+      console.log('Data: ', await data);
+      setOutput(await data);
+      if (command == 'cd') {
+        IShell.setLocation(await data);
+      }
     } catch (error) {
       console.error('Error executing command:', error);
     }
@@ -28,8 +27,8 @@ const TerminalComponent = () => {
       <div className="terminal">
         <div className="terminal-header">Terminal</div>
         <div className="terminal-body">
-          <pre className="output">{output}</pre>
           <div className="input-line">
+            {IShell.GetLocation()}
             <span className="green-text">$</span>
             <input
               className="command-input"
@@ -43,6 +42,7 @@ const TerminalComponent = () => {
               }}
             />
           </div>
+          <pre className="output">{output}</pre>
         </div>
       </div>
     </div>

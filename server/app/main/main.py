@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.main.routes import router
 from app.file.routes import router as routerFiles
 from app.dirs.routes import router as routerDirs
+from app.terminal.routes import router as routerT
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -11,6 +12,7 @@ app = FastAPI()
 app.include_router(router)
 app.include_router(routerFiles)
 app.include_router(routerDirs)
+app.include_router(routerT)
 
 # Configuracion de CORS
 origins = [
