@@ -1,8 +1,12 @@
-import { Component } from 'react';
 import axios from 'axios';
+import { ServerClass } from './ServerClass';
 
-export class Directory extends Component {
+export class Directory extends ServerClass {
   UrlAPI = import.meta.env.VITE_BACKEND_URL + 'dirs';
+
+  constructor() {
+    super();
+  }
 
   CreateDirectory = async (query: string = '') => {
     return await axios.post(this.UrlAPI + `/create${query}`, {

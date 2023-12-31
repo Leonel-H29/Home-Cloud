@@ -4,7 +4,7 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import getIconForFile from '../../hooks/Icon';
-
+import { useHandlesToActivate } from '../../hooks/useHandles';
 import {
   Alert,
   ButtonToolbar,
@@ -69,11 +69,6 @@ const FileListComponent = () => {
   }, []);
 
   useEffect(() => {
-    console.log('Local History: ', locationHistory);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
-
-  useEffect(() => {
     console.log('Selected: ', selected);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
@@ -111,30 +106,6 @@ const FileListComponent = () => {
 
   const handleDirectoryClick = (newLocation: string) => {
     listFilesAndDirectories(newLocation);
-  };
-
-  const handleCreateFileClick = () => {
-    setShowModalCreateFile(true);
-  };
-
-  const handleUploadFileClick = () => {
-    setShowModalUploadFile(true);
-  };
-
-  const handleRenameFileClick = () => {
-    setShowModalRenameFile(true);
-  };
-
-  const handleMoveFileClick = () => {
-    setShowModalMoveFile(true);
-  };
-
-  const handleDeleteFileClick = () => {
-    setShowModalDeleteFile(true);
-  };
-
-  const handleCreateDirsClick = () => {
-    setShowModalCreateDirs(true);
   };
 
   const handleSelectedClick = (name: string) => {
@@ -212,7 +183,8 @@ const FileListComponent = () => {
 
       <Dropdown.Menu>
         <Dropdown.Item
-          onClick={handleUploadFileClick}
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          onClick={() => useHandlesToActivate(setShowModalUploadFile)}
           title="Upload a exists file"
         >
           Upload a exists file
@@ -220,7 +192,8 @@ const FileListComponent = () => {
         <Dropdown.Item
           href="#"
           title="Create a new file"
-          onClick={handleCreateFileClick}
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          onClick={() => useHandlesToActivate(setShowModalCreateFile)}
         >
           Create a new file
         </Dropdown.Item>
@@ -245,7 +218,8 @@ const FileListComponent = () => {
         <Dropdown.Item
           href="#"
           title="Create a new directory"
-          onClick={handleCreateDirsClick}
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          onClick={() => useHandlesToActivate(setShowModalCreateDirs)}
         >
           Create a new directory
         </Dropdown.Item>
@@ -362,16 +336,25 @@ const FileListComponent = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        <Dropdown.Item onClick={handleRenameFileClick} title="Rename">
+        <Dropdown.Item
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          onClick={() => useHandlesToActivate(setShowModalRenameFile)}
+          title="Rename"
+        >
           Rename
         </Dropdown.Item>
-        <Dropdown.Item onClick={handleMoveFileClick} title="Move">
+        <Dropdown.Item
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          onClick={() => useHandlesToActivate(setShowModalMoveFile)}
+          title="Move"
+        >
           Move
         </Dropdown.Item>
         <Dropdown.Item
           //href="#"
           title="Delete"
-          onClick={handleDeleteFileClick}
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          onClick={() => useHandlesToActivate(setShowModalDeleteFile)}
         >
           Delete
         </Dropdown.Item>
