@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -22,7 +22,9 @@ import FileMove from '../Files/FileMove';
 import FileDelete from '../Files/FileDelete';
 import DirectoryCreate from '../Directories/DirectoryCreate';
 
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
+import { ServerClass } from '../Class/ServerClass';
+
+//const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
 
 interface Item {
   name: string;
@@ -54,6 +56,8 @@ const FileListComponent = () => {
   const [selected, setSelected] = useState<string[]>([]);
   const [filter, setFilter] = useState('');
 
+  const IServer = new ServerClass();
+
   useEffect(() => {
     listFilesAndDirectories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -71,7 +75,6 @@ const FileListComponent = () => {
 
   useEffect(() => {
     console.log('Selected: ', selected);
-    //console.log('Selected 0: ', selected[0]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   });
 
@@ -89,9 +92,10 @@ const FileListComponent = () => {
     setError('');
 
     try {
-      const response = await axios.get(`${UrlAPI}?location=${newLocation}`);
-      setContents(response.data.contents);
+      const response = IServer.ListFilesAndDirectories(newLocation);
+      setContents((await response).data.contents);
       //setLocationHistory([...locationHistory, newLocation]);
+
       updateLocationHistory(newLocation);
       setCurrentLocation(newLocation);
       console.log('Actual: ', currentLocation);
@@ -260,7 +264,7 @@ const FileListComponent = () => {
       <FileUpload
         showModal={showModalUploadFile}
         setShowModal={setShowModalUploadFile}
-        uploadLocation={currentLocation}
+        location={currentLocation}
         updateList={listFilesAndDirectories}
       />
     </Modal>

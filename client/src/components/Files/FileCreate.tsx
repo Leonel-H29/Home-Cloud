@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
+import { FileClass } from '../Class/FileClass';
+//const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
 
 interface CreateFileModalProps {
   showModal: boolean;
@@ -21,21 +20,15 @@ const FileCreate: React.FC<CreateFileModalProps> = ({
   const [fileName, setFileName] = useState('');
   const [fileExtension, setFileExtension] = useState('');
 
+  const IFile = new FileClass();
+
   const handleFileCreation = async () => {
     if (!showModal || !fileName || !fileExtension || !createLocation) {
       console.error('Missing data');
       return;
     }
     try {
-      const queryString = `?location=${createLocation}&name=${fileName}&extension=${fileExtension}`;
-      await axios.post(UrlAPI + `/create${queryString}`, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: false,
-      });
-
-      //alert(`Archivo creado correctamente.`);
+      IFile.CreateFile(createLocation, fileName, fileExtension);
       setShowModal(false);
       Swal.fire({
         position: 'top-end',

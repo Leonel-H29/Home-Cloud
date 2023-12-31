@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file'; // Reemplaza con tu URL API
+import { FileClass } from '../Class/FileClass';
 
 interface MoveFileModalProps {
   showModal: boolean;
@@ -21,6 +19,7 @@ const FileMove: React.FC<MoveFileModalProps> = ({
   updateList,
 }) => {
   const [newLocation, setNewLocation] = useState('');
+  const IFile = new FileClass();
 
   const handleFileMove = async () => {
     if (!showModal || !file || !newLocation || !currentLocation) {
@@ -28,14 +27,7 @@ const FileMove: React.FC<MoveFileModalProps> = ({
       return;
     }
     try {
-      const queryString = `${file}?current_location=${currentLocation}&new_location=${newLocation}`;
-      await axios.put(UrlAPI + `/edit/${queryString}`, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: false,
-      });
-
+      IFile.RenameOrMoveFile(file, '', currentLocation, newLocation);
       setShowModal(false);
       Swal.fire({
         position: 'top-end',

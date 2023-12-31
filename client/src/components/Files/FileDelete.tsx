@@ -1,9 +1,8 @@
 import React from 'react';
-import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
+import { FileClass } from '../Class/FileClass';
 
 interface DeleteFileModalProps {
   showModal: boolean;
@@ -20,6 +19,8 @@ const FileDelete: React.FC<DeleteFileModalProps> = ({
   location,
   updateList,
 }) => {
+  const IFile = new FileClass();
+
   const handleFileDelete = async () => {
     if (!showModal || !file || !location) {
       console.error('Missing data');
@@ -27,14 +28,7 @@ const FileDelete: React.FC<DeleteFileModalProps> = ({
     }
     try {
       const queryString = `${file}?location=${location}`;
-      await axios.delete(UrlAPI + `/delete/${queryString}`, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-        withCredentials: false,
-      });
-
-      //alert(`Archivo creado correctamente.`);
+      IFile.DeleteFile(queryString);
       setShowModal(false);
       Swal.fire({
         position: 'top-end',

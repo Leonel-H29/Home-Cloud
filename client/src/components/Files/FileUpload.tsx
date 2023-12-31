@@ -1,65 +1,33 @@
 import React, { useState, ChangeEvent } from 'react';
-import axios from 'axios';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
+import { FileClass } from '../Class/FileClass';
 
 interface FileUploadProps {
   showModal: boolean;
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  uploadLocation: string;
+  location: string;
   updateList: (location: string) => void;
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({
   showModal,
   setShowModal,
-  uploadLocation,
+  location,
   updateList,
 }) => {
-  //const [file, setFile] = useState<File | null>(null);
   const [files, setFiles] = useState<File[]>([]);
 
-  //console.log(UrlAPI);
-  //console.log('CURRENT: ', uploadLocation);
+  const IFile = new FileClass();
 
-  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  //   if (e.target.files && e.target.files.length > 0) {
-  //     setFile(e.target.files[0]);
-  //   }
-  // };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setFiles(Array.from(e.target.files));
     }
   };
 
-  // const handleFileUpload = async () => {
-  //   if (uploadLocation && file && showModal) {
-  //     try {
-  //       const formData = new FormData();
-
-  //       formData.append('file', file);
-
-  //       await axios.post(
-  //         UrlAPI + `/upload?location=${uploadLocation}`,
-  //         formData,
-  //         {
-  //           withCredentials: false,
-  //         }
-  //       );
-
-  //       alert('File uploaded successfully!');
-  //       setShowModal(false); // Cerramos el modal después de subir el archivo
-  //     } catch (error) {
-  //       console.error('Error uploading file:', error);
-  //     }
-  //   }
-  // };
-
   const handleFileUpload = async () => {
-    if (!uploadLocation && files.length == 0 && !showModal) {
+    if (!location && files.length == 0 && !showModal) {
       console.error('Missing data');
       return;
     }
@@ -68,11 +36,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
       formData.append('file', file);
 
       try {
-        await axios.post(
-          `${UrlAPI}/upload?location=${uploadLocation}`,
-          formData
-        );
-
+        IFile.UploadFile(location, formData);
         //alert(`The file ${file.name} uploaded successfully!`);
 
         Swal.fire({
@@ -94,7 +58,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         });
       } finally {
         setShowModal(false);
-        updateList(uploadLocation);
+        updateList(location);
       }
     });
   };
@@ -102,7 +66,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div>
       <Modal.Body>
-        {/* Aquí puedes agregar un formulario para ingresar el nombre del archivo */}
         <Form.Group controlId="formFileMultiple" className="mb-3">
           <Form.Label>Select at least a file</Form.Label>
           <Form.Control
@@ -118,7 +81,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           Cancel
         </Button>
         <Button variant="success" onClick={handleFileUpload}>
-          Save File
+          Save
         </Button>
       </Modal.Footer>
     </div>

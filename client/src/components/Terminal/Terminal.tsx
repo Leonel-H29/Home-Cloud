@@ -1,63 +1,49 @@
 import React, { useState } from 'react';
-//import './Terminal.css'; // Asegúrate de tener los estilos adecuados para tu terminal
-
+import './Terminal.css';
 const TerminalComponent = () => {
   const [command, setCommand] = useState('');
-  const [output, setOutput] = useState([]);
+  const [output, setOutput] = useState('');
 
-  const handleInputChange = (event: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setCommand(event.target.value);
-  };
+  const handleCommand = async () => {
+    // Lógica para ejecutar comandos
+    try {
+      // Ejemplo: ejecución de un comando 'ls'
+      const response = await fetch('/api/execute-command', {
+        method: 'POST',
+        body: JSON.stringify({ command }), // Envía el comando al servidor
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
 
-  const handleEnterPress = (event: { key: string }) => {
-    if (event.key === 'Enter') {
-      executeCommand();
+      const data = await response.json();
+      setOutput(data.output); // Establece la salida del comando
+    } catch (error) {
+      console.error('Error executing command:', error);
     }
-  };
-
-  const executeCommand = () => {
-    const commandArgs = command.split(' '); // Separa el comando y los argumentos
-    const cmd = commandArgs[0]; // Extrae el comando
-    //const args = commandArgs.slice(1); // Extrae los argumentos
-
-    // Ejecutar el comando (aquí puedes incluir lógica para diferentes comandos)
-    switch (cmd) {
-      case 'ls':
-        // Ejemplo: Simular el comando 'ls'
-        setOutput([]);
-        break;
-      case 'echo':
-        // Ejemplo: Simular el comando 'echo'
-        setOutput([]);
-        break;
-      case 'clear':
-        // Limpiar la salida
-        setOutput([]);
-        break;
-      default:
-        setOutput([]);
-    }
-    setCommand('');
   };
 
   return (
-    <div className="terminal">
-      <h1>Shell</h1>
-      <div className="terminal-output">
-        {output.map((line, index) => (
-          <div key={index}>{line}</div>
-        ))}
-      </div>
-      <div className="terminal-input">
-        <span>$</span>
-        <input
-          type="text"
-          value={command}
-          onChange={handleInputChange}
-          onKeyDown={handleEnterPress}
-        />
+    <div className="terminal-container">
+      <div className="terminal">
+        <div className="terminal-header">Terminal</div>
+        <div className="terminal-body">
+          <pre className="output">{output}</pre>
+          <div className="input-line">
+            <span className="green-text">$</span>
+            <input
+              className="command-input"
+              type="text"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleCommand();
+                }
+              }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );

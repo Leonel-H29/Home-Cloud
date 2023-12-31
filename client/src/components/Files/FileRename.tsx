@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
+import { FileClass } from '../Class/FileClass';
 
 interface RenameFileModalProps {
   showModal: boolean;
@@ -20,9 +18,8 @@ const FileRename: React.FC<RenameFileModalProps> = ({
   location,
   updateList,
 }) => {
-  const [newfileName, setNewFileName] = useState('');
-
-  console.log(`File: ${location}/${file}`);
+  const [newfileName, setNewFileName] = useState(file);
+  const IFile = new FileClass();
 
   const handleFileRename = async () => {
     if (!showModal || !newfileName || !file || !location) {
@@ -30,14 +27,7 @@ const FileRename: React.FC<RenameFileModalProps> = ({
       return;
     }
     try {
-      const queryString = `${file}?new_name=${newfileName}&current_location=${location}`;
-
-      await axios.put(UrlAPI + `/edit/${queryString}`, {
-        // headers: {
-        //   'Content-Type': 'multipart/form-data',
-        // },
-        withCredentials: false,
-      });
+      IFile.RenameOrMoveFile(file, newfileName, location, '');
 
       //alert(`Archivo creado correctamente.`);
       setShowModal(false);
