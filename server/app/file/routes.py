@@ -99,12 +99,13 @@ def get_file(name_file: str):
 
 
 @router.get(URL + "/download/{name_file}")
-def download_file(name_file: str):
+def download_file(name_file: str, location: str = Query(".")):
     """
     Endpoint to download one determinated file
     """
     mediaType = "application/octet-stream"
-    return FileResponse(getcwd() + "/" + name_file, media_type=mediaType, filename=name_file)
+    file_dir = path.join(getcwd(), location, name_file)
+    return FileResponse(file_dir, media_type=mediaType, filename=name_file)
 
 
 @router.delete(URL + "/delete/{name_file}")

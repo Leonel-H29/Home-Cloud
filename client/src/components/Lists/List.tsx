@@ -20,6 +20,7 @@ import FileCreate from '../Files/FileCreate';
 import FileRename from '../Files/FileRename';
 import FileMove from '../Files/FileMove';
 import FileDelete from '../Files/FileDelete';
+import FileDownload from '../Files/FileDownload';
 import DirectoryCreate from '../Directories/DirectoryCreate';
 
 import { ServerClass } from '../Class/ServerClass';
@@ -46,6 +47,7 @@ const FileListComponent = () => {
   const [showModalRenameFile, setShowModalRenameFile] = useState(false);
   const [showModalMoveFile, setShowModalMoveFile] = useState(false);
   const [showModalDeleteFile, setShowModalDeleteFile] = useState(false);
+  const [showModalDownloadFile, setShowModalDownloadFile] = useState(false);
 
   const [showModalCreateDirs, setShowModalCreateDirs] = useState(false);
 
@@ -161,7 +163,12 @@ const FileListComponent = () => {
   );
 
   const BtnDownload = (
-    <Button title="Download a File">
+    <Button
+      title="Download a File"
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      onClick={() => useHandlesToActivate(setShowModalDownloadFile)}
+      hidden={selected.length != 1}
+    >
       <i className="bi bi-download"></i>
     </Button>
   );
@@ -325,6 +332,23 @@ const FileListComponent = () => {
         setShowModal={setShowModalCreateDirs}
         location={currentLocation}
         updateList={listFilesAndDirectories}
+      />
+    </Modal>
+  );
+
+  const ModalDownloadFile = (
+    <Modal
+      show={showModalDownloadFile}
+      onHide={() => setShowModalDownloadFile(false)}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Download file</Modal.Title>
+      </Modal.Header>
+      <FileDownload
+        showModal={showModalDownloadFile}
+        file={selected[0]}
+        setShowModal={setShowModalDownloadFile}
+        location={currentLocation}
       />
     </Modal>
   );
@@ -503,6 +527,7 @@ const FileListComponent = () => {
       {ModalFileMove}
       {ModalFileDelete}
       {ModalDirsCreate}
+      {ModalDownloadFile}
     </>
   );
 };

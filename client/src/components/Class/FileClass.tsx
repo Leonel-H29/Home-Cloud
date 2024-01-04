@@ -41,6 +41,24 @@ export class FileClass extends ServerClass {
     });
   };
 
+  DownloadFile = async (file: string, location: string) => {
+    const queryString = `${file}?location=${location}`;
+    const response = await axios.get(this.UrlAPI + `/download/${queryString}`, {
+      headers: {
+        responseType: 'blob',
+        withCredentials: false,
+      },
+      withCredentials: false,
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', file);
+    document.body.appendChild(link);
+    link.click();
+  };
+
   DeleteFile = async (query: string = '') => {
     return await axios.delete(this.UrlAPI + `/delete/${query}`, {
       headers: {

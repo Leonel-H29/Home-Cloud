@@ -1,34 +1,68 @@
 //import React from 'react';
-import axios from 'axios';
+//import axios from 'axios';
+import { Button, Modal } from 'react-bootstrap';
+import { FileClass } from '../Class/FileClass';
+import Swal from 'sweetalert2';
 
-const FileDownload = () => {
+interface DownloadFileModalProps {
+  showModal: boolean;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+  file: string;
+  location: string;
+}
+
+const FileDownload: React.FC<DownloadFileModalProps> = ({
+  showModal,
+  setShowModal,
+  file,
+  location,
+}) => {
+  const IFile = new FileClass();
   const handleFileDownload = async () => {
-    try {
-      const response = await axios.get(
-        'http://localhost:8082/download/example.txt',
-        {
-          responseType: 'blob',
-          withCredentials: false,
-        }
-      );
+    if (!showModal || !file || !location) {
+      console.error('Missing data');
+      return;
+    }
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', 'example.txt');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    try {
+      IFile.DownloadFile(file, location);
+      setShowModal(false);
+      Swal.fire({
+        position: 'top-end',
+        icon: 'success',
+        title: `The file download successfully!`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
     } catch (error) {
-      console.error('Error downloading file:', error);
+      Swal.fire({
+        position: 'top-end',
+        icon: 'error',
+        title: `Error deleting file!`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      console.error('Error downloading file!: ', error);
+    } finally {
+      setShowModal(false);
+      //updateList(location);
     }
   };
 
   return (
-    <div>
-      <h2>Download a File</h2>
-      <button onClick={handleFileDownload}>Download</button>
-    </div>
+    <>
+      <Modal.Body>
+        Do you want to download the file `{location}/{file}`?
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowModal(false)}>
+          Close
+        </Button>
+        <Button variant="info" onClick={handleFileDownload}>
+          Download
+        </Button>
+      </Modal.Footer>
+    </>
   );
 };
 
