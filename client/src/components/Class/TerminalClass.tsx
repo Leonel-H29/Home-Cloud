@@ -17,13 +17,23 @@ export class TerminalClass {
   }
 
   Command = async (command: string = '') => {
-    const response = await axios.post(`${this.UrlAPI}?command=${command}`, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      withCredentials: false,
-    });
+    try {
+      const response = await axios.post(`${this.UrlAPI}?command=${command}`, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: false,
+      });
 
-    return await response.data.output;
+      const Location = response.data.location;
+
+      if (Location) {
+        this.setLocation(Location);
+      }
+
+      return response.data;
+    } catch (error) {
+      return { error: 'Error executing command' };
+    }
   };
 }

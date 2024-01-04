@@ -53,6 +53,12 @@
 
 .green-text {
   color: #00ff00;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  /* overflow: hidden; */
+
+  text-overflow: ellipsis;
 }
 
 .command-input {
@@ -68,4 +74,8 @@
 
 .command-input:focus {
   outline: none;
+}
+
+.green-text .command-input {
+  padding: 1.5rem;
 }

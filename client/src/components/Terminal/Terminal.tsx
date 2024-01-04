@@ -6,25 +6,56 @@ import React from 'react';
 const TerminalComponent = () => {
   const [commands, setCommands] = useState<string[]>([]); // Almacena todos los comandos
   const [output, setOutput] = useState<string[]>([]); // Almacena todas las salidas
+  const [listLocations, setListLocations] = useState<string[]>([]);
+
   const inputRef = useRef<HTMLInputElement>(null); // Referencia al input de comando
 
   const IShell = new TerminalClass();
+
+  const [location, SetLocation] = useState<string>('');
 
   useEffect(() => {
     inputRef.current?.focus(); // Enfocar automáticamente el input al iniciar
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await IShell.Command('pwd');
+        const currentLocation = data.location;
+
+        if (currentLocation) {
+          SetLocation(currentLocation);
+        }
+        setListLocations([...listLocations, location]);
+      } catch (error) {
+        console.error('Error fetching location:', error);
+      }
+    };
+
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleCommand = async (command: string) => {
     try {
-      if (command == 'clear') {
+      if (command === 'clear') {
         setOutput([]);
         setCommands([]);
         return;
       }
+
       const data = await IShell.Command(command);
-      setOutput((prevOutput) => [...prevOutput, data]); // Agregar la nueva salida debajo de la existente
-      setCommands((prevCommands) => [...prevCommands, command]); // Agregar el nuevo comando
-      inputRef.current?.focus(); // Enfocar automáticamente el input después de ejecutar el comando
+      if (data.error) {
+        setOutput((prevOutput) => [...prevOutput, `Error: ${data.error}`]);
+      } else {
+        setOutput((prevOutput) => [...prevOutput, data.output]);
+        setCommands((prevCommands) => [...prevCommands, command]);
+        SetLocation(data.location || location);
+        setListLocations((prevLocation) => [...prevLocation, location]);
+      }
+
+      inputRef.current?.focus();
     } catch (error) {
       console.error('Error executing command:', error);
     }
@@ -40,7 +71,7 @@ const TerminalComponent = () => {
             {output.map((out, index) => (
               <React.Fragment key={index}>
                 <div className="input-line">
-                  <span className="green-text">:{IShell.GetLocation()}$</span>
+                  <span className="green-text">:{listLocations[index]}$</span>
                   <input
                     className="command-input"
                     type="text"
@@ -63,7 +94,7 @@ const TerminalComponent = () => {
             ))}
           </div>
           <div className="input-line">
-            <span className="green-text">:{IShell.GetLocation()}$</span>
+            <span className="green-text">:{location}$</span>
             <input
               ref={inputRef}
               className="command-input"
