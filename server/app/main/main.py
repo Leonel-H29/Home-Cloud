@@ -4,8 +4,11 @@ from app.file.routes import router as routerFiles
 from app.dirs.routes import router as routerDirs
 from app.terminal.routes import router as routerT
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
 
-
+# Load environment variables from .env file
+load_dotenv()
 
 app = FastAPI()
 
@@ -14,11 +17,8 @@ app.include_router(routerFiles)
 app.include_router(routerDirs)
 app.include_router(routerT)
 
-# Configuracion de CORS
-origins = [
-    "http://localhost",
-    "http://localhost:5173",  # Si React se ejecuta en el puerto 3000
-]
+# Get the addresses allowed for CORS from the .env file
+origins = os.getenv("ALLOWED_ORIGINS").split(",")
 
 app.add_middleware(
     CORSMiddleware,

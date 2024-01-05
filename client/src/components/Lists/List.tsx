@@ -407,7 +407,7 @@ const FileListComponent = () => {
   );
 
   const FilterInput = (
-    <InputGroup className="mb-3">
+    <InputGroup className="mb-3" hidden={contents.length == 0}>
       <InputGroup.Text id="inputGroup-sizing-default">Filter</InputGroup.Text>
       <FormControl
         aria-label="Default"
