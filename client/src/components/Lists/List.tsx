@@ -7,25 +7,26 @@ import { useHandlesToActivate } from '../../hooks/useHandles';
 import {
   Alert,
   ButtonToolbar,
-  Dropdown,
   Form,
   FormControl,
   InputGroup,
-  Modal,
   Spinner,
 } from 'react-bootstrap';
-import FileUpload from '../Files/FileUpload';
-import FileCreate from '../Files/FileCreate';
-import FileRename from '../Files/FileRename';
-import FileMove from '../Files/FileMove';
-import FileDelete from '../Files/FileDelete';
-import FileDownload from '../Files/FileDownload';
-import DirectoryCreate from '../Directories/DirectoryCreate';
 
 import { ServerClass } from '../Class/ServerClass';
 import { useLocationServer } from '../../hooks/useLocation';
 import { useFilterData } from '../../hooks/useFilterData';
 import { useSelected } from '../../hooks/useSelected';
+import { BtnConfig, BtnPlusDirectory, BtnPlusFile } from '../Buttons/Buttons';
+import {
+  ModalFileDelete,
+  ModalFileMove,
+  ModalFileRename,
+  ModalFileUpload,
+  ModalFileCreate,
+  ModalFileDownload,
+  ModalDirsCreate,
+} from '../Modal/Modal';
 
 interface Item {
   name: string;
@@ -153,208 +154,54 @@ const FileListComponent = () => {
     </Button>
   );
 
-  const BtnPlusFile = (
-    <Dropdown as={ButtonGroup}>
-      <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
-        <i className="bi bi-file-earmark-plus"></i>{' '}
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu>
-        <Dropdown.Item
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          onClick={() => useHandlesToActivate(setShowModalUploadFile)}
-          title="Upload a exists file"
-        >
-          Upload a exists file
-        </Dropdown.Item>
-        <Dropdown.Item
-          href="#"
-          title="Create a new file"
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          onClick={() => useHandlesToActivate(setShowModalCreateFile)}
-        >
-          Create a new file
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
-  );
-
-  const BtnPlusDirectory = (
-    <Dropdown as={ButtonGroup}>
-      <Dropdown.Toggle
-        split
-        id="dropdown-split-basic"
-        title="Directories options"
-      >
-        <i className="bi bi-folder-plus"></i>{' '}
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu>
-        <Dropdown.Item title="Upload a exists directory">
-          Upload a exists directory
-        </Dropdown.Item>
-        <Dropdown.Item
-          href="#"
-          title="Create a new directory"
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          onClick={() => useHandlesToActivate(setShowModalCreateDirs)}
-        >
-          Create a new directory
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
-  );
-
-  const ModalFileUpload = (
-    <Modal
-      show={showModalUploadFile}
-      onHide={() => setShowModalUploadFile(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Upload a new file</Modal.Title>
-      </Modal.Header>
-      <FileUpload
-        showModal={showModalUploadFile}
-        setShowModal={setShowModalUploadFile}
-        location={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-    </Modal>
-  );
-
-  const ModalFileCreate = (
-    <Modal
-      show={showModalCreateFile}
-      onHide={() => setShowModalCreateFile(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Create a new file</Modal.Title>
-      </Modal.Header>
-      <FileCreate
-        showModal={showModalCreateFile}
-        setShowModal={setShowModalCreateFile}
-        createLocation={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-    </Modal>
-  );
-
-  const ModalFileRename = (
-    <Modal
-      show={showModalRenameFile}
-      onHide={() => setShowModalRenameFile(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Rename file</Modal.Title>
-      </Modal.Header>
-      <FileRename
-        showModal={showModalRenameFile}
-        setShowModal={setShowModalRenameFile}
-        file={selected[0]}
-        location={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-    </Modal>
-  );
-
-  const ModalFileMove = (
-    <Modal show={showModalMoveFile} onHide={() => setShowModalMoveFile(false)}>
-      <Modal.Header closeButton>
-        <Modal.Title>Rename file</Modal.Title>
-      </Modal.Header>
-      <FileMove
-        showModal={showModalMoveFile}
-        setShowModal={setShowModalMoveFile}
-        file={selected[0]}
+  const ShowModal = (
+    <>
+      <ModalFileMove
+        show={showModalMoveFile}
+        handleClose={setShowModalMoveFile}
+        selected={selected[0]}
         currentLocation={currentLocation}
         updateList={listFilesAndDirectories}
       />
-    </Modal>
-  );
-
-  const ModalFileDelete = (
-    <Modal
-      show={showModalDeleteFile}
-      onHide={() => setShowModalDeleteFile(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Delete file</Modal.Title>
-      </Modal.Header>
-      <FileDelete
-        showModal={showModalDeleteFile}
-        setShowModal={setShowModalDeleteFile}
-        file={selected[0]}
-        location={currentLocation}
+      <ModalFileRename
+        show={showModalRenameFile}
+        handleClose={setShowModalRenameFile}
+        selected={selected[0]}
+        currentLocation={currentLocation}
         updateList={listFilesAndDirectories}
       />
-    </Modal>
-  );
-
-  const ModalDirsCreate = (
-    <Modal
-      show={showModalCreateDirs}
-      onHide={() => setShowModalCreateDirs(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Create a new directory</Modal.Title>
-      </Modal.Header>
-      <DirectoryCreate
-        showModal={showModalCreateDirs}
-        setShowModal={setShowModalCreateDirs}
-        location={currentLocation}
+      <ModalFileDelete
+        show={showModalDeleteFile}
+        handleClose={setShowModalDeleteFile}
+        selected={selected[0]}
+        currentLocation={currentLocation}
         updateList={listFilesAndDirectories}
       />
-    </Modal>
-  );
-
-  const ModalDownloadFile = (
-    <Modal
-      show={showModalDownloadFile}
-      onHide={() => setShowModalDownloadFile(false)}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title>Download file</Modal.Title>
-      </Modal.Header>
-      <FileDownload
-        showModal={showModalDownloadFile}
-        file={selected[0]}
-        setShowModal={setShowModalDownloadFile}
-        location={currentLocation}
+      <ModalFileCreate
+        show={showModalCreateFile}
+        handleClose={setShowModalCreateFile}
+        currentLocation={currentLocation}
+        updateList={listFilesAndDirectories}
       />
-    </Modal>
-  );
-
-  const BtnConfig = (
-    <Dropdown as={ButtonGroup} hidden={selected.length != 1}>
-      <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
-        <i className="bi bi-gear"></i>{' '}
-      </Dropdown.Toggle>
-
-      <Dropdown.Menu>
-        <Dropdown.Item
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          onClick={() => useHandlesToActivate(setShowModalRenameFile)}
-          title="Rename"
-        >
-          Rename
-        </Dropdown.Item>
-        <Dropdown.Item
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          onClick={() => useHandlesToActivate(setShowModalMoveFile)}
-          title="Move"
-        >
-          Move
-        </Dropdown.Item>
-        <Dropdown.Item
-          //href="#"
-          title="Delete"
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          onClick={() => useHandlesToActivate(setShowModalDeleteFile)}
-        >
-          Delete
-        </Dropdown.Item>
-      </Dropdown.Menu>
-    </Dropdown>
+      <ModalFileUpload
+        show={showModalUploadFile}
+        handleClose={setShowModalUploadFile}
+        currentLocation={currentLocation}
+        updateList={listFilesAndDirectories}
+      />
+      <ModalDirsCreate
+        show={showModalCreateDirs}
+        handleClose={setShowModalCreateDirs}
+        currentLocation={currentLocation}
+        updateList={listFilesAndDirectories}
+      />
+      <ModalFileDownload
+        show={showModalDownloadFile}
+        handleClose={setShowModalDownloadFile}
+        currentLocation={currentLocation}
+        selected={selected[0]}
+      />
+    </>
   );
 
   const FormSearch = (
@@ -447,7 +294,15 @@ const FileListComponent = () => {
                 <td>{item.created}</td>
                 <td>{item.last_modified}</td>
                 <td>{item.size}</td>
-                <td>{BtnConfig}</td>
+                {/* <td>{BtnConfig}</td> */}
+                <td>
+                  <BtnConfig
+                    handleRename={() => setShowModalRenameFile(true)}
+                    handleMove={() => setShowModalMoveFile(true)}
+                    handleDelete={() => setShowModalDeleteFile(true)}
+                    selected={selected}
+                  />
+                </td>
               </tr>
             );
           })}
@@ -470,8 +325,11 @@ const FileListComponent = () => {
       >
         <ButtonGroup className="mb-2">
           {BtnRefresh}
-          {BtnPlusFile}
-          {BtnPlusDirectory}
+          <BtnPlusFile
+            handleUpload={() => setShowModalUploadFile(true)}
+            handleCreate={() => setShowModalCreateFile(true)}
+          />
+          <BtnPlusDirectory handleUpload={() => setShowModalCreateDirs(true)} />
           {BtnDownload}
         </ButtonGroup>
 
@@ -492,13 +350,7 @@ const FileListComponent = () => {
       )}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && TableDirsFiles}
-      {ModalFileCreate}
-      {ModalFileUpload}
-      {ModalFileRename}
-      {ModalFileMove}
-      {ModalFileDelete}
-      {ModalDirsCreate}
-      {ModalDownloadFile}
+      {ShowModal}
     </>
   );
 };

@@ -28,7 +28,7 @@ const FileMove: React.FC<MoveFileModalProps> = ({
     }
     try {
       IFile.RenameOrMoveFile(file, '', currentLocation, newLocation);
-      setShowModal(false);
+      //setShowModal(false);
       Swal.fire({
         position: 'top-end',
         icon: 'success',
@@ -47,6 +47,7 @@ const FileMove: React.FC<MoveFileModalProps> = ({
       console.error('Error moving file!: ', error);
     } finally {
       updateList(newLocation);
+      setShowModal(false);
     }
   };
 
