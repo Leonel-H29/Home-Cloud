@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-//import axios from 'axios';
+import { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
@@ -24,8 +23,9 @@ import FileDownload from '../Files/FileDownload';
 import DirectoryCreate from '../Directories/DirectoryCreate';
 
 import { ServerClass } from '../Class/ServerClass';
-
-//const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'list';
+import { useLocationServer } from '../../hooks/useLocation';
+import { useFilterData } from '../../hooks/useFilterData';
+import { useSelected } from '../../hooks/useSelected';
 
 interface Item {
   name: string;
@@ -36,10 +36,16 @@ interface Item {
   size: string;
 }
 
-const defaultLocation: string = import.meta.env.VITE_DEFAULT_LOCATION;
-
 const FileListComponent = () => {
-  const [location, setLocation] = useState(defaultLocation);
+  const {
+    location,
+    locationHistory,
+    setLocationHistory,
+    updateLocationHistory,
+    handleLocationChange,
+    defaultLocation,
+  } = useLocationServer();
+
   const [contents, setContents] = useState<Item[]>([]);
 
   const [showModalCreateFile, setShowModalCreateFile] = useState(false);
@@ -51,12 +57,13 @@ const FileListComponent = () => {
 
   const [showModalCreateDirs, setShowModalCreateDirs] = useState(false);
 
-  const [locationHistory, setLocationHistory] = useState<string[]>([]);
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [selected, setSelected] = useState<string[]>([]);
-  const [filter, setFilter] = useState('');
+
+  const { selected, setSelected, handleSelectedClick } = useSelected();
+
+  const { filter, handleFilterChange } = useFilterData();
 
   const IServer = new ServerClass();
 
@@ -64,25 +71,6 @@ const FileListComponent = () => {
     listFilesAndDirectories();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    setSelected([]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    console.log('Selected: ', selected);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  });
-
-  const updateLocationHistory = (newLocation: string) => {
-    const lastLocation = locationHistory[locationHistory.length - 1];
-    if (lastLocation !== newLocation) {
-      const updatedHistory = [...locationHistory, newLocation];
-      setLocationHistory(updatedHistory);
-      localStorage.setItem('locationHistory', JSON.stringify(updatedHistory));
-    }
-  };
 
   const listFilesAndDirectories = async (newLocation: string = location) => {
     setLoading(true);
@@ -110,13 +98,6 @@ const FileListComponent = () => {
     listFilesAndDirectories(newLocation);
   };
 
-  const handleSelectedClick = (name: string) => {
-    const updatedSelected = selected.includes(name)
-      ? selected.filter((item) => item !== name)
-      : [...selected, name];
-    setSelected(updatedSelected);
-  };
-
   const handleBackClick = () => {
     if (locationHistory.length == 0) {
       setCurrentLocation(defaultLocation);
@@ -131,18 +112,8 @@ const FileListComponent = () => {
     setLocationHistory(locationHistory);
   };
 
-  const handleLocationChange = (e: {
-    target: { value: React.SetStateAction<string> };
-  }) => {
-    setLocation(e.target.value);
-  };
-
   const handleListClick = () => {
     listFilesAndDirectories();
-  };
-
-  const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilter(e.target.value);
   };
 
   const filteredContents = contents.filter((item) =>
