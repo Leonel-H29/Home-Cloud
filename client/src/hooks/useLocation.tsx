@@ -5,7 +5,6 @@ const defaultLocation: string = import.meta.env.VITE_DEFAULT_LOCATION;
 export function useLocationServer() {
   const [location, setLocation] = useState(defaultLocation);
   const [locationHistory, setLocationHistory] = useState<string[]>([]);
-
   useEffect(() => {
     console.log('History: ', locationHistory);
     // eslint-disable-next-line react-hooks/exhaustive-deps

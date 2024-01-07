@@ -2,20 +2,21 @@ import { useState, useRef, useEffect } from 'react';
 import './Terminal.css';
 import { TerminalClass } from '../Class/TerminalClass';
 import React from 'react';
+import { useLocationServer } from '../../hooks/useLocation';
 
 const TerminalComponent = () => {
-  const [commands, setCommands] = useState<string[]>([]); // Almacena todos los comandos
-  const [output, setOutput] = useState<string[]>([]); // Almacena todas las salidas
+  const [commands, setCommands] = useState<string[]>([]); // Store all commands
+  const [output, setOutput] = useState<string[]>([]); // Store all outputs
   const [listLocations, setListLocations] = useState<string[]>([]);
 
-  const inputRef = useRef<HTMLInputElement>(null); // Referencia al input de comando
+  const inputRef = useRef<HTMLInputElement>(null); // Reference to command input
 
   const IShell = new TerminalClass();
 
-  const [location, SetLocation] = useState<string>('');
+  const { location, setLocation } = useLocationServer();
 
   useEffect(() => {
-    inputRef.current?.focus(); // Enfocar automáticamente el input al iniciar
+    inputRef.current?.focus(); // Automatically focus input on startup
   }, []);
 
   useEffect(() => {
@@ -25,7 +26,7 @@ const TerminalComponent = () => {
         const currentLocation = data.location;
 
         if (currentLocation) {
-          SetLocation(currentLocation);
+          setLocation(currentLocation);
         }
         setListLocations([...listLocations, location]);
       } catch (error) {
@@ -51,7 +52,7 @@ const TerminalComponent = () => {
       } else {
         setOutput((prevOutput) => [...prevOutput, data.output]);
         setCommands((prevCommands) => [...prevCommands, command]);
-        SetLocation(data.location || location);
+        setLocation(data.location || location);
         setListLocations((prevLocation) => [...prevLocation, location]);
       }
 

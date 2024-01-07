@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post(URL + "/create/{dir_name}")
 def create_directory(dir_name: str,  location: str = Query(".")):
     try:
-        #mkdir(getcwd() + "/" + dir_name)
+        # mkdir(getcwd() + "/" + dir_name)
         mkdir(path.join(getcwd(), location, dir_name))
     except FileExistsError:
         return JSONResponse(content={
@@ -28,6 +28,7 @@ def create_directory(dir_name: str,  location: str = Query(".")):
         "message": "Directory Created Successfully"
     }, status_code=201)
 
+
 @router.put(URL + "/rename/{dir_name}")
 def edit_directory(dir_name: str, new_name: str):
     try:
@@ -43,10 +44,12 @@ def edit_directory(dir_name: str, new_name: str):
         "message": "Directory Edited Successfully"
     }, status_code=200)
 
+
 @router.delete(URL + "/delete/{dir_name}")
-def delete_directory(dir_name: str):
+def delete_directory(dir_name: str,  location: str = Query(".")):
     try:
-        rmdir(getcwd() + "/" + dir_name)
+        # rmdir(getcwd() + "/" + dir_name)
+        rmdir(path.join(getcwd(), location, dir_name))
     except FileNotFoundError:
         return JSONResponse(content={
             "deleted": False,

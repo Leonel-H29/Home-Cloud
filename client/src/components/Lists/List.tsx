@@ -17,7 +17,12 @@ import { ServerClass } from '../Class/ServerClass';
 import { useLocationServer } from '../../hooks/useLocation';
 import { useFilterData } from '../../hooks/useFilterData';
 import { useSelected } from '../../hooks/useSelected';
-import { BtnConfig, BtnPlusDirectory, BtnPlusFile } from '../Buttons/Buttons';
+import {
+  BtnConfigFile,
+  BtnConfigDirectory,
+  BtnPlusDirectory,
+  BtnPlusFile,
+} from '../Buttons/Buttons';
 import {
   ModalFileDelete,
   ModalFileMove,
@@ -296,12 +301,23 @@ const FileListComponent = () => {
                 <td>{item.size}</td>
                 {/* <td>{BtnConfig}</td> */}
                 <td>
-                  <BtnConfig
-                    handleRename={() => setShowModalRenameFile(true)}
-                    handleMove={() => setShowModalMoveFile(true)}
-                    handleDelete={() => setShowModalDeleteFile(true)}
-                    selected={selected}
-                  />
+                  {item.type === 'Directory' ? (
+                    <BtnConfigDirectory
+                      handleRename={() => setShowModalRenameFile(true)}
+                      handleMove={() => setShowModalMoveFile(true)}
+                      handleDelete={() => setShowModalDeleteFile(true)}
+                      selected={selected}
+                    />
+                  ) : (
+                    <>
+                      <BtnConfigFile
+                        handleRename={() => setShowModalRenameFile(true)}
+                        handleMove={() => setShowModalMoveFile(true)}
+                        handleDelete={() => setShowModalDeleteFile(true)}
+                        selected={selected}
+                      />
+                    </>
+                  )}
                 </td>
               </tr>
             );
@@ -329,7 +345,10 @@ const FileListComponent = () => {
             handleUpload={() => setShowModalUploadFile(true)}
             handleCreate={() => setShowModalCreateFile(true)}
           />
-          <BtnPlusDirectory handleUpload={() => setShowModalCreateDirs(true)} />
+          <BtnPlusDirectory
+            handleUpload={() => alert('Modal')}
+            handleCreate={() => setShowModalCreateDirs(true)}
+          />
           {BtnDownload}
         </ButtonGroup>
 

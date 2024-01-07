@@ -25,12 +25,6 @@ export class TerminalClass {
         withCredentials: false,
       });
 
-      const Location = response.data.location;
-
-      if (Location) {
-        this.setLocation(Location);
-      }
-
       return response.data;
     } catch (error) {
       return { error: 'Error executing command' };
