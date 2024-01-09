@@ -3,7 +3,6 @@ import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import getIconForFile from '../../hooks/Icon';
-import { useHandlesToActivate } from '../../hooks/useHandles';
 import {
   Alert,
   ButtonToolbar,
@@ -23,15 +22,12 @@ import {
   BtnPlusDirectory,
   BtnPlusFile,
 } from '../Buttons/Buttons';
+import { ModalShow } from '../Modal/Modal';
 import {
-  ModalFileDelete,
-  ModalFileMove,
-  ModalFileRename,
-  ModalFileUpload,
-  ModalFileCreate,
-  ModalFileDownload,
-  ModalDirsCreate,
-} from '../Modal/Modal';
+  useModalFileOrDir,
+  OperationType,
+  SelectType,
+} from '../../hooks/useModal';
 
 interface Item {
   name: string;
@@ -54,14 +50,8 @@ const FileListComponent = () => {
 
   const [contents, setContents] = useState<Item[]>([]);
 
-  const [showModalCreateFile, setShowModalCreateFile] = useState(false);
-  const [showModalUploadFile, setShowModalUploadFile] = useState(false);
-  const [showModalRenameFile, setShowModalRenameFile] = useState(false);
-  const [showModalMoveFile, setShowModalMoveFile] = useState(false);
-  const [showModalDeleteFile, setShowModalDeleteFile] = useState(false);
-  const [showModalDownloadFile, setShowModalDownloadFile] = useState(false);
-
-  const [showModalCreateDirs, setShowModalCreateDirs] = useState(false);
+  const { showModal, operation, type, handleModal, setShowModal } =
+    useModalFileOrDir();
 
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const [loading, setLoading] = useState(false);
@@ -142,8 +132,7 @@ const FileListComponent = () => {
   const BtnDownload = (
     <Button
       title="Download a File"
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      onClick={() => useHandlesToActivate(setShowModalDownloadFile)}
+      onClick={() => handleModal(SelectType.File, OperationType.Download)}
       hidden={selected.length != 1}
     >
       <i className="bi bi-download"></i>
@@ -161,50 +150,14 @@ const FileListComponent = () => {
 
   const ShowModal = (
     <>
-      <ModalFileMove
-        show={showModalMoveFile}
-        handleClose={setShowModalMoveFile}
+      <ModalShow
+        show={showModal}
+        handleClose={setShowModal}
         selected={selected[0]}
         currentLocation={currentLocation}
         updateList={listFilesAndDirectories}
-      />
-      <ModalFileRename
-        show={showModalRenameFile}
-        handleClose={setShowModalRenameFile}
-        selected={selected[0]}
-        currentLocation={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-      <ModalFileDelete
-        show={showModalDeleteFile}
-        handleClose={setShowModalDeleteFile}
-        selected={selected[0]}
-        currentLocation={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-      <ModalFileCreate
-        show={showModalCreateFile}
-        handleClose={setShowModalCreateFile}
-        currentLocation={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-      <ModalFileUpload
-        show={showModalUploadFile}
-        handleClose={setShowModalUploadFile}
-        currentLocation={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-      <ModalDirsCreate
-        show={showModalCreateDirs}
-        handleClose={setShowModalCreateDirs}
-        currentLocation={currentLocation}
-        updateList={listFilesAndDirectories}
-      />
-      <ModalFileDownload
-        show={showModalDownloadFile}
-        handleClose={setShowModalDownloadFile}
-        currentLocation={currentLocation}
-        selected={selected[0]}
+        operation={operation}
+        type={type}
       />
     </>
   );
@@ -299,21 +252,32 @@ const FileListComponent = () => {
                 <td>{item.created}</td>
                 <td>{item.last_modified}</td>
                 <td>{item.size}</td>
-                {/* <td>{BtnConfig}</td> */}
                 <td>
                   {item.type === 'Directory' ? (
                     <BtnConfigDirectory
-                      handleRename={() => setShowModalRenameFile(true)}
-                      handleMove={() => setShowModalMoveFile(true)}
-                      handleDelete={() => setShowModalDeleteFile(true)}
+                      handleRename={() =>
+                        handleModal(SelectType.Directoy, OperationType.Rename)
+                      }
+                      handleMove={() =>
+                        handleModal(SelectType.Directoy, OperationType.Move)
+                      }
+                      handleDelete={() =>
+                        handleModal(SelectType.Directoy, OperationType.Delete)
+                      }
                       selected={selected}
                     />
                   ) : (
                     <>
                       <BtnConfigFile
-                        handleRename={() => setShowModalRenameFile(true)}
-                        handleMove={() => setShowModalMoveFile(true)}
-                        handleDelete={() => setShowModalDeleteFile(true)}
+                        handleRename={() =>
+                          handleModal(SelectType.File, OperationType.Rename)
+                        }
+                        handleMove={() =>
+                          handleModal(SelectType.File, OperationType.Move)
+                        }
+                        handleDelete={() =>
+                          handleModal(SelectType.File, OperationType.Delete)
+                        }
                         selected={selected}
                       />
                     </>
@@ -342,12 +306,18 @@ const FileListComponent = () => {
         <ButtonGroup className="mb-2">
           {BtnRefresh}
           <BtnPlusFile
-            handleUpload={() => setShowModalUploadFile(true)}
-            handleCreate={() => setShowModalCreateFile(true)}
+            handleUpload={() =>
+              handleModal(SelectType.File, OperationType.Upload)
+            }
+            handleCreate={() =>
+              handleModal(SelectType.File, OperationType.Create)
+            }
           />
           <BtnPlusDirectory
             handleUpload={() => alert('Modal')}
-            handleCreate={() => setShowModalCreateDirs(true)}
+            handleCreate={() =>
+              handleModal(SelectType.Directoy, OperationType.Create)
+            }
           />
           {BtnDownload}
         </ButtonGroup>

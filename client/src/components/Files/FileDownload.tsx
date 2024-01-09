@@ -9,6 +9,7 @@ interface DownloadFileModalProps {
   setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
   file: string;
   location: string;
+  updateList: (location: string) => void;
 }
 
 const FileDownload: React.FC<DownloadFileModalProps> = ({
@@ -16,6 +17,7 @@ const FileDownload: React.FC<DownloadFileModalProps> = ({
   setShowModal,
   file,
   location,
+  updateList,
 }) => {
   const IFile = new FileClass();
   const handleFileDownload = async () => {
@@ -45,7 +47,7 @@ const FileDownload: React.FC<DownloadFileModalProps> = ({
       console.error('Error downloading file!: ', error);
     } finally {
       setShowModal(false);
-      //updateList(location);
+      updateList(location);
     }
   };
 
