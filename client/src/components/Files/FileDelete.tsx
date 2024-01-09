@@ -1,35 +1,27 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import Swal from 'sweetalert2';
-
+import { ModalSelectProps } from '../Interfaces/IModal';
 import { FileClass } from '../Class/FileClass';
 
-interface DeleteFileModalProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  file: string;
-  location: string;
-  updateList: (location: string) => void;
-}
-
-const FileDelete: React.FC<DeleteFileModalProps> = ({
-  showModal,
-  setShowModal,
-  file,
+const FileDelete: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
   location,
   updateList,
 }) => {
   const IFile = new FileClass();
 
   const handleFileDelete = async () => {
-    if (!showModal || !file || !location) {
+    if (!show || !selected || !location) {
       console.error('Missing data');
       return;
     }
     try {
-      const queryString = `${file}?location=${location}`;
+      const queryString = `${selected}?location=${location}`;
       IFile.DeleteFile(queryString);
-      setShowModal(false);
+      handleClose(false);
       Swal.fire({
         position: 'top-end',
         icon: 'success',
@@ -55,10 +47,10 @@ const FileDelete: React.FC<DeleteFileModalProps> = ({
   return (
     <>
       <Modal.Body>
-        Do you want to delete the file `{location}/{file}`?
+        Do you want to delete the file `{location}/{selected}`?
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Close
         </Button>
         <Button variant="danger" onClick={handleFileDelete}>

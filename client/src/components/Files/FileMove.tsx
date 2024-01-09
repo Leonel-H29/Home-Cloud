@@ -2,32 +2,25 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
+import { ModalSelectProps } from '../Interfaces/IModal';
 
-interface MoveFileModalProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  file: string;
-  currentLocation: string;
-  updateList: (location: string) => void;
-}
-
-const FileMove: React.FC<MoveFileModalProps> = ({
-  showModal,
-  setShowModal,
-  file,
-  currentLocation,
+const FileMove: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
+  location,
   updateList,
 }) => {
   const [newLocation, setNewLocation] = useState('');
   const IFile = new FileClass();
 
   const handleFileMove = async () => {
-    if (!showModal || !file || !newLocation || !currentLocation) {
+    if (!show || !selected || !newLocation || !location) {
       console.error('Missing data');
       return;
     }
     try {
-      IFile.RenameOrMoveFile(file, '', currentLocation, newLocation);
+      IFile.RenameOrMoveFile(selected, '', location, newLocation);
       //setShowModal(false);
       Swal.fire({
         position: 'top-end',
@@ -47,7 +40,7 @@ const FileMove: React.FC<MoveFileModalProps> = ({
       console.error('Error moving file!: ', error);
     } finally {
       updateList(newLocation);
-      setShowModal(false);
+      handleClose(false);
     }
   };
 
@@ -67,7 +60,7 @@ const FileMove: React.FC<MoveFileModalProps> = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Close
         </Button>
         <Button variant="primary" onClick={handleFileMove}>

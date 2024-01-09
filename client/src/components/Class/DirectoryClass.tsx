@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ServerClass } from './ServerClass';
 
-export class Directory extends ServerClass {
+export class DirectoryClass extends ServerClass {
   UrlAPI = import.meta.env.VITE_BACKEND_URL + 'dirs';
 
   constructor() {

@@ -22,7 +22,7 @@ import {
   BtnPlusDirectory,
   BtnPlusFile,
 } from '../Buttons/Buttons';
-import { ModalShow } from '../Modal/Modal';
+import { ModalShow } from '../Modal/ModalMain';
 import {
   useModalFileOrDir,
   OperationType,
@@ -154,7 +154,7 @@ const FileListComponent = () => {
         show={showModal}
         handleClose={setShowModal}
         selected={selected[0]}
-        currentLocation={currentLocation}
+        location={currentLocation}
         updateList={listFilesAndDirectories}
         operation={operation}
         type={type}

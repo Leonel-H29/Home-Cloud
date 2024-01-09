@@ -1,34 +1,25 @@
-//import React from 'react';
-//import axios from 'axios';
 import { Button, Modal } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
 import Swal from 'sweetalert2';
+import { ModalSelectProps } from '../Interfaces/IModal';
 
-interface DownloadFileModalProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  file: string;
-  location: string;
-  updateList: (location: string) => void;
-}
-
-const FileDownload: React.FC<DownloadFileModalProps> = ({
-  showModal,
-  setShowModal,
-  file,
+const FileDownload: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
   location,
   updateList,
 }) => {
   const IFile = new FileClass();
   const handleFileDownload = async () => {
-    if (!showModal || !file || !location) {
+    if (!show || !selected || !location) {
       console.error('Missing data');
       return;
     }
 
     try {
-      IFile.DownloadFile(file, location);
-      setShowModal(false);
+      IFile.DownloadFile(selected, location);
+      handleClose(false);
       Swal.fire({
         position: 'top-end',
         icon: 'success',
@@ -46,7 +37,7 @@ const FileDownload: React.FC<DownloadFileModalProps> = ({
       });
       console.error('Error downloading file!: ', error);
     } finally {
-      setShowModal(false);
+      handleClose(false);
       updateList(location);
     }
   };
@@ -54,10 +45,10 @@ const FileDownload: React.FC<DownloadFileModalProps> = ({
   return (
     <>
       <Modal.Body>
-        Do you want to download the file `{location}/{file}`?
+        Do you want to download the file `{location}/{selected}`?
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Close
         </Button>
         <Button variant="info" onClick={handleFileDownload}>

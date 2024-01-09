@@ -2,19 +2,12 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
-//const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'file';
+import { ModalProps } from '../Interfaces/IModal';
 
-interface CreateFileModalProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  createLocation: string;
-  updateList: (location: string) => void;
-}
-
-const FileCreate: React.FC<CreateFileModalProps> = ({
-  showModal,
-  setShowModal,
-  createLocation,
+const FileCreate: React.FC<ModalProps> = ({
+  show,
+  handleClose,
+  location,
   updateList,
 }) => {
   const [fileName, setFileName] = useState('');
@@ -23,13 +16,13 @@ const FileCreate: React.FC<CreateFileModalProps> = ({
   const IFile = new FileClass();
 
   const handleFileCreation = async () => {
-    if (!showModal || !fileName || !fileExtension || !createLocation) {
+    if (!show || !fileName || !fileExtension || !location) {
       console.error('Missing data');
       return;
     }
     try {
-      IFile.CreateFile(createLocation, fileName, fileExtension);
-      setShowModal(false);
+      IFile.CreateFile(location, fileName, fileExtension);
+      handleClose(false);
       Swal.fire({
         position: 'top-end',
         icon: 'success',
@@ -48,7 +41,7 @@ const FileCreate: React.FC<CreateFileModalProps> = ({
       console.error('Error creating file!: ', error);
     } finally {
       //setShowModal(false);
-      updateList(createLocation);
+      updateList(location);
     }
   };
 
@@ -77,7 +70,7 @@ const FileCreate: React.FC<CreateFileModalProps> = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Close
         </Button>
         <Button variant="primary" onClick={handleFileCreation}>

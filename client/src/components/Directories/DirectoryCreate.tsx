@@ -1,38 +1,26 @@
-import axios from 'axios';
 import React, { useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Button, Form, Modal, ModalProps } from 'react-bootstrap';
 import Swal from 'sweetalert2';
+import { DirectoryClass } from '../Class/DirectoryClass';
 
-const UrlAPI = import.meta.env.VITE_BACKEND_URL + 'dirs';
-
-interface DirCreateProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  location: string;
-  updateList: (location: string) => void;
-}
-
-const DirectoryCreate: React.FC<DirCreateProps> = ({
-  showModal,
-  setShowModal,
+const DirectoryCreate: React.FC<ModalProps> = ({
+  show,
+  handleClose,
   location,
   updateList,
 }) => {
   const [dir_name, setDir] = useState<string>('');
-
-  console.log(UrlAPI);
+  const IDir = new DirectoryClass();
 
   const handleDirCreate = async () => {
-    if (!location && !dir_name && !showModal) {
+    if (!location && !dir_name && !show) {
       console.error('Missing data');
       return;
     }
     try {
       const queryString = `${dir_name}?location=${location}`;
 
-      await axios.post(`${UrlAPI}/create/${queryString}`, {
-        withCredentials: true,
-      });
+      IDir.CreateDirectory(queryString);
       Swal.fire({
         position: 'top-end',
         icon: 'success',
@@ -49,7 +37,7 @@ const DirectoryCreate: React.FC<DirCreateProps> = ({
         timer: 1500,
       });
     } finally {
-      setShowModal(false);
+      handleClose(false);
       updateList(location);
     }
   };
@@ -70,7 +58,7 @@ const DirectoryCreate: React.FC<DirCreateProps> = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Close
         </Button>
         <Button variant="primary" onClick={handleDirCreate}>

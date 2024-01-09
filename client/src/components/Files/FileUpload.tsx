@@ -2,17 +2,11 @@ import React, { useState, ChangeEvent } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
+import { ModalProps } from '../Interfaces/IModal';
 
-interface FileUploadProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  location: string;
-  updateList: (location: string) => void;
-}
-
-const FileUpload: React.FC<FileUploadProps> = ({
-  showModal,
-  setShowModal,
+const FileUpload: React.FC<ModalProps> = ({
+  show,
+  handleClose,
   location,
   updateList,
 }) => {
@@ -27,7 +21,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
   };
 
   const handleFileUpload = async () => {
-    if (!location && files.length == 0 && !showModal) {
+    if (!location && files.length == 0 && !show) {
       console.error('Missing data');
       return;
     }
@@ -37,8 +31,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
       try {
         IFile.UploadFile(location, formData);
-        //alert(`The file ${file.name} uploaded successfully!`);
-
         Swal.fire({
           position: 'top-end',
           icon: 'success',
@@ -47,8 +39,6 @@ const FileUpload: React.FC<FileUploadProps> = ({
           timer: 1500,
         });
       } catch (error) {
-        //setToastMessage('Error uploading files.');
-        //alert('Error uploading file.');
         Swal.fire({
           position: 'top-end',
           icon: 'error',
@@ -57,7 +47,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
           timer: 1500,
         });
       } finally {
-        setShowModal(false);
+        handleClose(false);
         updateList(location);
       }
     });
@@ -77,7 +67,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
         </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Cancel
         </Button>
         <Button variant="success" onClick={handleFileUpload}>

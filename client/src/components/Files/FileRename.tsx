@@ -2,35 +2,27 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
+import { ModalSelectProps } from '../Interfaces/IModal';
 
-interface RenameFileModalProps {
-  showModal: boolean;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  file: string;
-  location: string;
-  updateList: (location: string) => void;
-}
-
-const FileRename: React.FC<RenameFileModalProps> = ({
-  showModal,
-  setShowModal,
-  file,
+const FileRename: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
   location,
   updateList,
 }) => {
-  const [newfileName, setNewFileName] = useState(file);
+  const [newfileName, setNewFileName] = useState(selected);
   const IFile = new FileClass();
 
   const handleFileRename = async () => {
-    if (!showModal || !newfileName || !file || !location) {
+    if (!show || !newfileName || !selected || !location) {
       console.error('Missing data');
       return;
     }
     try {
-      IFile.RenameOrMoveFile(file, newfileName, location, '');
+      IFile.RenameOrMoveFile(selected, newfileName, location, '');
 
-      //alert(`Archivo creado correctamente.`);
-      setShowModal(false);
+      handleClose(false);
       Swal.fire({
         position: 'top-end',
         icon: 'success',
@@ -69,7 +61,7 @@ const FileRename: React.FC<RenameFileModalProps> = ({
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => handleClose(false)}>
           Close
         </Button>
         <Button variant="primary" onClick={handleFileRename}>
