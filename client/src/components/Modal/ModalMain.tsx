@@ -8,7 +8,12 @@ import {
   ModalFileMove,
   ModalFileRename,
 } from './ModalFiles';
-import { ModalDirsCreate, ModalDirsDelete } from './ModalDirs';
+import {
+  ModalDirsCreate,
+  ModalDirsDelete,
+  ModalDirsMove,
+  ModalDirsRename,
+} from './ModalDirs';
 
 interface Modal {
   show: boolean;
@@ -30,8 +35,8 @@ const modalComponents = {
     DOWNLOAD: ModalFileDownload,
   },
   DIRECTORY: {
-    //MOVE: ModalFileMove,
-    //RENAME: ModalFileRename,
+    MOVE: ModalDirsMove,
+    RENAME: ModalDirsRename,
     DELETE: ModalDirsDelete,
     CREATE: ModalDirsCreate,
   },

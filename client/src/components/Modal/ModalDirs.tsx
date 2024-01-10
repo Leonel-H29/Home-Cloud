@@ -1,6 +1,8 @@
 import { ModalProps, ModalSelectProps } from '../Interfaces/IModal';
 import DirectoryCreate from '../Directories/DirectoryCreate';
 import DirectoryDelete from '../Directories/DirectoryDelete';
+import DirectoryRename from '../Directories/DirectoryRename';
+import DirectoryMove from '../Directories/DirectoryMove';
 
 export const ModalDirsCreate: React.FC<ModalProps> = ({
   show,
@@ -27,6 +29,41 @@ export const ModalDirsDelete: React.FC<ModalSelectProps> = ({
 }) => (
   <>
     <DirectoryDelete
+      show={show}
+      handleClose={handleClose}
+      selected={selected}
+      location={location}
+      updateList={updateList}
+    />
+  </>
+);
+export const ModalDirsMove: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
+  location,
+  updateList,
+}) => (
+  <>
+    <DirectoryMove
+      show={show}
+      handleClose={handleClose}
+      selected={selected}
+      location={location}
+      updateList={updateList}
+    />
+  </>
+);
+
+export const ModalDirsRename: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
+  location,
+  updateList,
+}) => (
+  <>
+    <DirectoryRename
       show={show}
       handleClose={handleClose}
       selected={selected}

@@ -24,7 +24,13 @@ export class DirectoryClass extends ServerClass {
   //   );
   // };
 
-  RenameOrMoveDirectory = async (query: string = '') => {
+  RenameOrMoveDirectory = async (
+    name: string,
+    newName: string = '',
+    cLocation: string,
+    nLocation: string = ''
+  ) => {
+    const query = `${name}?new_name=${newName}&current_location=${cLocation}&new_location=${nLocation}`;
     return await axios.put(this.UrlAPI + `/edit/${query}`, {
       headers: {
         'Content-Type': 'multipart/form-data',
