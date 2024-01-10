@@ -1,8 +1,9 @@
-import React, { useState, ChangeEvent } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
-import Swal from 'sweetalert2';
+import React, { useCallback } from 'react';
+import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
 import { ModalProps } from '../Interfaces/IModal';
+import { useDropzone } from 'react-dropzone';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const FileUpload: React.FC<ModalProps> = ({
   show,
@@ -10,41 +11,37 @@ const FileUpload: React.FC<ModalProps> = ({
   location,
   updateList,
 }) => {
-  const [files, setFiles] = useState<File[]>([]);
+  const onDrop = useCallback((acceptedFiles: any) => {
+    // Do something with the files
+    console.log(acceptedFiles);
+  }, []);
+  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
+    useDropzone({ onDrop });
 
   const IFile = new FileClass();
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      setFiles(Array.from(e.target.files));
-    }
-  };
+  const showAlert = useCustomSwalTopEnd();
 
   const handleFileUpload = async () => {
-    if (!location && files.length == 0 && !show) {
+    if (!location && acceptedFiles.length == 0 && !show) {
       console.error('Missing data');
       return;
     }
-    files.forEach(async (file) => {
+    acceptedFiles.forEach(async (file) => {
       const formData = new FormData();
       formData.append('file', file);
 
       try {
-        IFile.UploadFile(location, formData);
-        Swal.fire({
-          position: 'top-end',
-          icon: 'success',
-          title: `The file ${file.name} uploaded successfully!`,
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        const response = await IFile.UploadFile(location, formData);
+        if (response.status == 200) {
+          showAlert({
+            icon: 'success',
+            title: `The file '${file.name}' uploaded successfully!`,
+          });
+        }
       } catch (error) {
-        Swal.fire({
-          position: 'top-end',
+        showAlert({
           icon: 'error',
-          title: `Error uploading ${file.name} file`,
-          showConfirmButton: false,
-          timer: 1500,
+          title: `Error uploading '${file.name}' file`,
         });
       } finally {
         handleClose(false);
@@ -57,20 +54,46 @@ const FileUpload: React.FC<ModalProps> = ({
     <div>
       <Modal.Body>
         <Form.Group controlId="formFileMultiple" className="mb-3">
-          <Form.Label>Select at least a file</Form.Label>
-          <Form.Control
-            type="file"
-            size="sm"
-            onChange={handleFileChange}
-            multiple
-          />
+          <div {...getRootProps()}>
+            <input {...getInputProps()} />
+            {isDragActive ? (
+              <Alert variant={'light'} className="text-center">
+                <i
+                  className="bi bi-file-earmark-arrow-up-fill"
+                  style={{ fontSize: '4em' }}
+                ></i>
+                <br />
+                Drop the files here ...
+              </Alert>
+            ) : (
+              <Alert variant={'dark'} className="text-center">
+                <i
+                  className="bi bi-file-earmark-arrow-up-fill"
+                  style={{ fontSize: '4em' }}
+                ></i>
+                <br />
+                Drag 'n' drop some files here, or click to select files
+              </Alert>
+            )}
+          </div>
         </Form.Group>
+
+        <div
+          hidden={acceptedFiles.length == 0}
+          style={{ alignContent: 'center' }}
+        >
+          <p>Has been selected {acceptedFiles.length} files</p>
+        </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => handleClose(false)}>
+        <Button
+          variant="secondary"
+          onClick={() => handleClose(false)}
+          title="Cancel"
+        >
           Cancel
         </Button>
-        <Button variant="success" onClick={handleFileUpload}>
+        <Button variant="success" onClick={handleFileUpload} title="Save">
           Save
         </Button>
       </Modal.Footer>
