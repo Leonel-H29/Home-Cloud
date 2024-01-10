@@ -1,6 +1,7 @@
 from fastapi import APIRouter,  Query
 from fastapi.responses import JSONResponse
 from os import getcwd, mkdir, rmdir, rename, path
+from shutil import rmtree
 
 
 URL = '/api/dirs'
@@ -10,7 +11,6 @@ router = APIRouter()
 @router.post(URL + "/create/{dir_name}")
 def create_directory(dir_name: str,  location: str = Query(".")):
     try:
-        # mkdir(getcwd() + "/" + dir_name)
         mkdir(path.join(getcwd(), location, dir_name))
     except FileExistsError:
         return JSONResponse(content={
@@ -49,7 +49,7 @@ def edit_directory(dir_name: str, new_name: str):
 def delete_directory(dir_name: str,  location: str = Query(".")):
     try:
         # rmdir(getcwd() + "/" + dir_name)
-        rmdir(path.join(getcwd(), location, dir_name))
+        rmtree(path.join(getcwd(), location, dir_name))
     except FileNotFoundError:
         return JSONResponse(content={
             "deleted": False,
