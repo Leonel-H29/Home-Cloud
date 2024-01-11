@@ -3,6 +3,7 @@ import { Dropdown, ButtonGroup } from 'react-bootstrap';
 interface BtnConfigProps {
   handleRename: () => void;
   handleMove: () => void;
+  handleDownload: () => void;
   handleDelete: () => void;
   selected: string[];
 }
@@ -10,6 +11,7 @@ interface BtnConfigProps {
 export const BtnConfigFile: React.FC<BtnConfigProps> = ({
   handleRename,
   handleMove,
+  handleDownload,
   handleDelete,
   selected,
 }) => (
@@ -24,6 +26,9 @@ export const BtnConfigFile: React.FC<BtnConfigProps> = ({
       </Dropdown.Item>
       <Dropdown.Item onClick={handleMove} title="Move">
         Move
+      </Dropdown.Item>
+      <Dropdown.Item onClick={handleDownload} title="Download">
+        Download
       </Dropdown.Item>
       <Dropdown.Item onClick={handleDelete} title="Delete">
         Delete
@@ -35,6 +40,7 @@ export const BtnConfigFile: React.FC<BtnConfigProps> = ({
 export const BtnConfigDirectory: React.FC<BtnConfigProps> = ({
   handleRename,
   handleMove,
+  handleDownload,
   handleDelete,
   selected,
 }) => (
@@ -49,6 +55,9 @@ export const BtnConfigDirectory: React.FC<BtnConfigProps> = ({
       </Dropdown.Item>
       <Dropdown.Item onClick={handleMove} title="Move">
         Move
+      </Dropdown.Item>
+      <Dropdown.Item onClick={handleDownload} title="Download">
+        Download
       </Dropdown.Item>
       <Dropdown.Item onClick={handleDelete} title="Delete">
         Delete

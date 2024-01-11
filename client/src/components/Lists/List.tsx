@@ -9,7 +9,6 @@ import {
   Form,
   FormControl,
   InputGroup,
-  Spinner,
 } from 'react-bootstrap';
 
 import { ServerClass } from '../Class/ServerClass';
@@ -28,6 +27,8 @@ import {
   OperationType,
   SelectType,
 } from '../../hooks/useModal';
+import { useLoading } from '../../hooks/useLoading';
+import { Loading } from '../Loading/Loading';
 
 interface Item {
   name: string;
@@ -54,7 +55,8 @@ const FileListComponent = () => {
     useModalFileOrDir();
 
   const [currentLocation, setCurrentLocation] = useState<string>(location);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
+  const { loading, setLoading } = useLoading();
   const [error, setError] = useState('');
 
   const { selected, setSelected, handleSelectedClick } = useSelected();
@@ -112,8 +114,11 @@ const FileListComponent = () => {
     listFilesAndDirectories();
   };
 
-  const filteredContents = contents.filter((item) =>
-    item.name.toLowerCase().includes(filter.toLowerCase())
+  const filteredContents = contents.filter(
+    (item) =>
+      item.name.toLowerCase().includes(filter.toLowerCase()) ||
+      item.type.toLowerCase().includes(filter.toLowerCase()) ||
+      item.owner.toLowerCase().includes(filter.toLowerCase())
   );
 
   /* BUTTONS */
@@ -126,16 +131,6 @@ const FileListComponent = () => {
       disabled={locationHistory.length <= 1}
     >
       <i className="bi bi-arrow-left"></i> Back
-    </Button>
-  );
-
-  const BtnDownload = (
-    <Button
-      title="Download a File"
-      onClick={() => handleModal(SelectType.File, OperationType.Download)}
-      hidden={selected.length != 1}
-    >
-      <i className="bi bi-download"></i>
     </Button>
   );
 
@@ -233,7 +228,6 @@ const FileListComponent = () => {
                 <td>
                   {item.type === 'Directory' ? (
                     <Button
-                      href="#"
                       variant="outline-primary"
                       onClick={() =>
                         handleDirectoryClick(`${currentLocation}/${item.name}`)
@@ -264,6 +258,9 @@ const FileListComponent = () => {
                       handleDelete={() =>
                         handleModal(SelectType.Directoy, OperationType.Delete)
                       }
+                      handleDownload={() =>
+                        handleModal(SelectType.Directoy, OperationType.Download)
+                      }
                       selected={selected}
                     />
                   ) : (
@@ -277,6 +274,9 @@ const FileListComponent = () => {
                         }
                         handleDelete={() =>
                           handleModal(SelectType.File, OperationType.Delete)
+                        }
+                        handleDownload={() =>
+                          handleModal(SelectType.File, OperationType.Download)
                         }
                         selected={selected}
                       />
@@ -319,7 +319,6 @@ const FileListComponent = () => {
               handleModal(SelectType.Directoy, OperationType.Create)
             }
           />
-          {BtnDownload}
         </ButtonGroup>
 
         {FormSearch}
@@ -327,16 +326,7 @@ const FileListComponent = () => {
       <br />
       {FilterInput}
       <br />
-      {loading && (
-        <div className="display-flex">
-          <Spinner animation="border" role="status" />
-          &nbsp;
-          <span className="sr-only">Loading...</span>
-          <br />
-          <br />
-          Wait a seconds
-        </div>
-      )}
+      {loading && <Loading />}
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && TableDirsFiles}
       {ShowModal}

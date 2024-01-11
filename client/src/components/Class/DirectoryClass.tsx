@@ -47,4 +47,22 @@ export class DirectoryClass extends ServerClass {
       withCredentials: false,
     });
   };
+
+  DownloadDirectory = async (dir_name: string, location: string) => {
+    const queryString = `${dir_name}?location=${location}`;
+    const response = await axios.get(this.UrlAPI + `/download/${queryString}`, {
+      headers: {
+        responseType: 'blob',
+      },
+    });
+    // const url = window.URL.createObjectURL(new Blob([response.data]));
+    // const link = document.createElement('a');
+    // link.href = url;
+    // link.setAttribute('download', `${dir_name}.zip`);
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
+
+    return response;
+  };
 }

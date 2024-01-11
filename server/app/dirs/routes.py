@@ -1,8 +1,8 @@
 from fastapi import APIRouter,  Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from os import getcwd, mkdir, rmdir, rename, path
 from shutil import rmtree
-from shutil import move
+from shutil import move, make_archive
 
 URL = '/api/dirs'
 router = APIRouter()
@@ -90,3 +90,28 @@ def delete_directory(dir_name: str,  location: str = Query(".")):
         "deleted": True,
         "message": "Directory Deleted Successfully"
     }, status_code=200)
+
+
+
+@router.get(URL + "/download/{dir_name}")
+def download_directory(dir_name: str, location: str = Query(".")):
+    try:
+        
+        mediaType = "application/octet-stream"
+        zip_filepath = make_archive(path.join(getcwd(), location, dir_name), 'zip', path.join(getcwd(), location, dir_name))
+        print(zip_filepath)
+        
+
+        return FileResponse(zip_filepath, media_type=mediaType,filename=dir_name)
+
+    except FileNotFoundError:
+        return JSONResponse(
+            content={
+                "downloaded": False,
+                "message": "Directory Not Found"
+            },
+            status_code=404
+        )
+    finally:
+        rmtree(zip_filepath, ignore_errors=True)
+   

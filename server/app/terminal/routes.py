@@ -1,13 +1,16 @@
 from fastapi import APIRouter
 import subprocess
 import os
-
+from dotenv import load_dotenv
 URL = '/api/shell'
+
+# Load environment variables from .env file
+load_dotenv()
 
 router = APIRouter()
 
 current_location = "/home/"
-allowed_commands = ['ls', 'pwd', 'cd', 'touch', 'nano', 'mkdir', 'rmdir', 'echo', 'grep', 'cat', 'zip', 'unzip', 'wc']
+allowed_commands = os.getenv("ALLOWED_COMMANDS").split(",")
 
 @router.post(URL)
 async def execute_command(command: str):

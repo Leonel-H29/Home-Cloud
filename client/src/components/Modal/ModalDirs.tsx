@@ -3,6 +3,7 @@ import DirectoryCreate from '../Directories/DirectoryCreate';
 import DirectoryDelete from '../Directories/DirectoryDelete';
 import DirectoryRename from '../Directories/DirectoryRename';
 import DirectoryMove from '../Directories/DirectoryMove';
+import DirectoryDownload from '../Directories/DirectoryDownload';
 
 export const ModalDirsCreate: React.FC<ModalProps> = ({
   show,
@@ -67,6 +68,24 @@ export const ModalDirsRename: React.FC<ModalSelectProps> = ({
       show={show}
       handleClose={handleClose}
       selected={selected}
+      location={location}
+      updateList={updateList}
+    />
+  </>
+);
+
+export const ModalDirsDownload: React.FC<ModalSelectProps> = ({
+  show,
+  handleClose,
+  selected,
+  location,
+  updateList,
+}) => (
+  <>
+    <DirectoryDownload
+      show={show}
+      selected={selected}
+      handleClose={handleClose}
       location={location}
       updateList={updateList}
     />

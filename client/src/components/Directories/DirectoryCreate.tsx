@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Modal, ModalProps } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { DirectoryClass } from '../Class/DirectoryClass';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const DirectoryCreate: React.FC<ModalProps> = ({
   show,
@@ -11,6 +11,7 @@ const DirectoryCreate: React.FC<ModalProps> = ({
 }) => {
   const [dir_name, setDir] = useState<string>('');
   const IDir = new DirectoryClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleDirCreate = async () => {
     if (!location && !dir_name && !show) {
@@ -20,21 +21,18 @@ const DirectoryCreate: React.FC<ModalProps> = ({
     try {
       const queryString = `${dir_name}?location=${location}`;
 
-      IDir.CreateDirectory(queryString);
-      Swal.fire({
-        position: 'top-end',
-        icon: 'success',
-        title: `The directory ${dir_name} createed successfully!`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      const response = await IDir.CreateDirectory(queryString);
+
+      if (response.status == 200) {
+        showAlert({
+          icon: 'success',
+          title: `The directory '${dir_name}' createed successfully!`,
+        });
+      }
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
-        title: `Error creating ${dir_name} directory`,
-        showConfirmButton: false,
-        timer: 1500,
+        title: `Error creating '${dir_name}' directory`,
       });
     } finally {
       handleClose(false);

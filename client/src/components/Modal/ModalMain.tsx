@@ -11,6 +11,7 @@ import {
 import {
   ModalDirsCreate,
   ModalDirsDelete,
+  ModalDirsDownload,
   ModalDirsMove,
   ModalDirsRename,
 } from './ModalDirs';
@@ -39,6 +40,7 @@ const modalComponents = {
     RENAME: ModalDirsRename,
     DELETE: ModalDirsDelete,
     CREATE: ModalDirsCreate,
+    DOWNLOAD: ModalDirsDownload,
   },
 };
 
