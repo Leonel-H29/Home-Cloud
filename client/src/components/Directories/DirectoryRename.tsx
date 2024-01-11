@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { ModalSelectProps } from '../Interfaces/IModal';
 import { DirectoryClass } from '../Class/DirectoryClass';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const DirectoryRename: React.FC<ModalSelectProps> = ({
   show,
@@ -13,6 +13,7 @@ const DirectoryRename: React.FC<ModalSelectProps> = ({
 }) => {
   const [newDirName, setNewDirName] = useState(selected);
   const IDir = new DirectoryClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleDirsRename = async () => {
     if (!show || !newDirName || !selected || !location) {
@@ -20,23 +21,25 @@ const DirectoryRename: React.FC<ModalSelectProps> = ({
       return;
     }
     try {
-      IDir.RenameOrMoveDirectory(selected, newDirName, location, '');
+      const response = await IDir.RenameOrMoveDirectory(
+        selected,
+        newDirName,
+        location,
+        ''
+      );
 
       handleClose(false);
-      Swal.fire({
-        position: 'top-end',
-        icon: 'success',
-        title: `The directory has be rename successfully!`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+
+      if (response.status == 200) {
+        showAlert({
+          icon: 'success',
+          title: `The directory has be rename successfully!`,
+        });
+      }
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error renaming directory!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error renaming directory!: ', error);
     } finally {

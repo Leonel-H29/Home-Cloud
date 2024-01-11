@@ -57,6 +57,7 @@ export class FileClass extends ServerClass {
     link.setAttribute('download', file);
     document.body.appendChild(link);
     link.click();
+    return response;
   };
 
   DeleteFile = async (query: string = '') => {

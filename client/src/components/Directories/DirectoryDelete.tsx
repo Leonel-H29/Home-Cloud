@@ -1,8 +1,8 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { ModalSelectProps } from '../Interfaces/IModal';
 import { DirectoryClass } from '../Class/DirectoryClass';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const DirectoryDelete: React.FC<ModalSelectProps> = ({
   show,
@@ -12,6 +12,7 @@ const DirectoryDelete: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const IDir = new DirectoryClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleDirectoryDelete = async () => {
     if (!show || !selected || !location) {
@@ -20,35 +21,19 @@ const DirectoryDelete: React.FC<ModalSelectProps> = ({
     }
     try {
       const queryString = `${selected}/?location=${location}`;
-      //IDir.DeleteDirectory(queryString);
 
       const response = await IDir.DeleteDirectory(queryString);
-      //console.log('Response: ', await IDir.DeleteDirectory(queryString));
 
       if (response.status == 200) {
-        Swal.fire({
-          position: 'top-end',
+        showAlert({
           icon: 'success',
           title: `The directory deleted successfully!`,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } else {
-        Swal.fire({
-          position: 'top-end',
-          icon: 'error',
-          title: `Error deleting directory!`,
-          showConfirmButton: false,
-          timer: 1500,
         });
       }
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error deleting directory!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error deleting directory!: ', error);
     } finally {

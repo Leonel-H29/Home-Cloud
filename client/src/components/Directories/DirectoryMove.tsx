@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const DirectoryMove: React.FC<ModalSelectProps> = ({
   show,
@@ -13,6 +13,7 @@ const DirectoryMove: React.FC<ModalSelectProps> = ({
 }) => {
   const [newLocation, setNewLocation] = useState('');
   const IFile = new FileClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleDirectoryMove = async () => {
     if (!show || !selected || !newLocation || !location) {
@@ -28,21 +29,15 @@ const DirectoryMove: React.FC<ModalSelectProps> = ({
       );
       //setShowModal(false);
       if (response.status == 200) {
-        Swal.fire({
-          position: 'top-end',
+        showAlert({
           icon: 'success',
           title: `The directory has been moved successfully!`,
-          showConfirmButton: false,
-          timer: 1500,
         });
       }
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error moving directory!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error moving directory!: ', error);
     } finally {

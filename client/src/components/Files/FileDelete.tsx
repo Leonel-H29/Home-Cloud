@@ -21,12 +21,15 @@ const FileDelete: React.FC<ModalSelectProps> = ({
     }
     try {
       const queryString = `${selected}?location=${location}`;
-      IFile.DeleteFile(queryString);
+      const response = await IFile.DeleteFile(queryString);
       handleClose(false);
-      showAlert({
-        icon: 'success',
-        title: `The file deleted successfully!`,
-      });
+
+      if (response.status == 200) {
+        showAlert({
+          icon: 'success',
+          title: `The file deleted successfully!`,
+        });
+      }
     } catch (error) {
       showAlert({
         icon: 'error',

@@ -11,7 +11,7 @@ const FileUpload: React.FC<ModalProps> = ({
   location,
   updateList,
 }) => {
-  const onDrop = useCallback((acceptedFiles: any) => {
+  const onDrop = useCallback((acceptedFiles: unknown) => {
     // Do something with the files
     console.log(acceptedFiles);
   }, []);

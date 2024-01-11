@@ -19,22 +19,18 @@ const FileDownload: React.FC<ModalSelectProps> = ({
     }
 
     try {
-      IFile.DownloadFile(selected, location);
+      const response = await IFile.DownloadFile(selected, location);
       handleClose(false);
-      showAlert({
-        position: 'top-end',
-        icon: 'success',
-        title: `The file download successfully!`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      if (response.status == 200) {
+        showAlert({
+          icon: 'success',
+          title: `The file download successfully!`,
+        });
+      }
     } catch (error) {
       showAlert({
-        position: 'top-end',
         icon: 'error',
         title: `Error deleting file!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error downloading file!: ', error);
     } finally {
