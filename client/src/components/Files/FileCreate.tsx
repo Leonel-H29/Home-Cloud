@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
 import { ModalProps } from '../Interfaces/IModal';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const FileCreate: React.FC<ModalProps> = ({
   show,
@@ -12,6 +12,7 @@ const FileCreate: React.FC<ModalProps> = ({
 }) => {
   const [fileName, setFileName] = useState('');
   const [fileExtension, setFileExtension] = useState('');
+  const showAlert = useCustomSwalTopEnd();
 
   const IFile = new FileClass();
 
@@ -23,20 +24,14 @@ const FileCreate: React.FC<ModalProps> = ({
     try {
       IFile.CreateFile(location, fileName, fileExtension);
       handleClose(false);
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'success',
         title: `The file created successfully!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error creating file!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error creating file!: ', error);
     } finally {

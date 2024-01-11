@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const FileMove: React.FC<ModalSelectProps> = ({
   show,
@@ -13,6 +13,7 @@ const FileMove: React.FC<ModalSelectProps> = ({
 }) => {
   const [newLocation, setNewLocation] = useState('');
   const IFile = new FileClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleFileMove = async () => {
     if (!show || !selected || !newLocation || !location) {
@@ -20,22 +21,24 @@ const FileMove: React.FC<ModalSelectProps> = ({
       return;
     }
     try {
-      IFile.RenameOrMoveFile(selected, '', location, newLocation);
+      const response = await IFile.RenameOrMoveFile(
+        selected,
+        '',
+        location,
+        newLocation
+      );
       //setShowModal(false);
-      Swal.fire({
-        position: 'top-end',
-        icon: 'success',
-        title: `The file has been moved successfully!`,
-        showConfirmButton: false,
-        timer: 1500,
-      });
+
+      if (response.status == 200) {
+        showAlert({
+          icon: 'success',
+          title: `The file has been moved successfully!`,
+        });
+      }
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error moving file!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error moving file!: ', error);
     } finally {

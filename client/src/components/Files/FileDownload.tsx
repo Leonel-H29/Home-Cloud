@@ -1,7 +1,7 @@
 import { Button, Modal } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
-import Swal from 'sweetalert2';
 import { ModalSelectProps } from '../Interfaces/IModal';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const FileDownload: React.FC<ModalSelectProps> = ({
   show,
@@ -11,6 +11,7 @@ const FileDownload: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const IFile = new FileClass();
+  const showAlert = useCustomSwalTopEnd();
   const handleFileDownload = async () => {
     if (!show || !selected || !location) {
       console.error('Missing data');
@@ -20,7 +21,7 @@ const FileDownload: React.FC<ModalSelectProps> = ({
     try {
       IFile.DownloadFile(selected, location);
       handleClose(false);
-      Swal.fire({
+      showAlert({
         position: 'top-end',
         icon: 'success',
         title: `The file download successfully!`,
@@ -28,7 +29,7 @@ const FileDownload: React.FC<ModalSelectProps> = ({
         timer: 1500,
       });
     } catch (error) {
-      Swal.fire({
+      showAlert({
         position: 'top-end',
         icon: 'error',
         title: `Error deleting file!`,

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const FileRename: React.FC<ModalSelectProps> = ({
   show,
@@ -13,6 +13,7 @@ const FileRename: React.FC<ModalSelectProps> = ({
 }) => {
   const [newfileName, setNewFileName] = useState(selected);
   const IFile = new FileClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleFileRename = async () => {
     if (!show || !newfileName || !selected || !location) {
@@ -29,21 +30,15 @@ const FileRename: React.FC<ModalSelectProps> = ({
 
       if (response.status == 200) {
         handleClose(false);
-        Swal.fire({
-          position: 'top-end',
+        showAlert({
           icon: 'success',
           title: `The file has be rename successfully!`,
-          showConfirmButton: false,
-          timer: 1500,
         });
       }
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error renaming file!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error renaming file!: ', error);
     } finally {

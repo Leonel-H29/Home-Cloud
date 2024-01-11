@@ -1,8 +1,8 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import Swal from 'sweetalert2';
 import { ModalSelectProps } from '../Interfaces/IModal';
 import { FileClass } from '../Class/FileClass';
+import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 
 const FileDelete: React.FC<ModalSelectProps> = ({
   show,
@@ -12,6 +12,7 @@ const FileDelete: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const IFile = new FileClass();
+  const showAlert = useCustomSwalTopEnd();
 
   const handleFileDelete = async () => {
     if (!show || !selected || !location) {
@@ -22,20 +23,14 @@ const FileDelete: React.FC<ModalSelectProps> = ({
       const queryString = `${selected}?location=${location}`;
       IFile.DeleteFile(queryString);
       handleClose(false);
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'success',
         title: `The file deleted successfully!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
     } catch (error) {
-      Swal.fire({
-        position: 'top-end',
+      showAlert({
         icon: 'error',
         title: `Error deleting file!`,
-        showConfirmButton: false,
-        timer: 1500,
       });
       console.error('Error deleting file!: ', error);
     } finally {
