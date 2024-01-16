@@ -1,0 +1,6 @@
+.vscode/
+.gitignore
+.dockerignore
+README.md
+Frontend.Dockerfile
+package-lock.json

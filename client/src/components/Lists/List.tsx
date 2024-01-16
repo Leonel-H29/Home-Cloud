@@ -29,6 +29,8 @@ import {
 } from '../../hooks/useModal';
 import { useLoading } from '../../hooks/useLoading';
 import { Loading } from '../Loading/Loading';
+import useMediaPlayer from '../../hooks/useMediaPlayer';
+import MediaPlayer from '../Preview/MediaPlayer';
 
 interface Item {
   name: string;
@@ -61,7 +63,15 @@ const FileListComponent = () => {
 
   const { selected, setSelected, handleSelectedClick } = useSelected();
 
-  const { filter, handleFilterChange } = useFilterData();
+  const { filter, setFilter, handleFilterChange } = useFilterData();
+
+  const {
+    showMediaPlayer,
+    mediaPlayerUrl,
+
+    handleOpenMediaPlayer,
+    handleCloseMediaPlayer,
+  } = useMediaPlayer();
 
   const IServer = new ServerClass();
 
@@ -72,6 +82,7 @@ const FileListComponent = () => {
 
   const listFilesAndDirectories = async (newLocation: string = location) => {
     setLoading(true);
+    setFilter('');
     setError('');
 
     try {
@@ -97,6 +108,7 @@ const FileListComponent = () => {
   };
 
   const handleBackClick = () => {
+    setFilter('');
     if (locationHistory.length == 0) {
       setCurrentLocation(defaultLocation);
       listFilesAndDirectories(defaultLocation);
@@ -111,6 +123,7 @@ const FileListComponent = () => {
   };
 
   const handleListClick = () => {
+    setFilter('');
     listFilesAndDirectories();
   };
 
@@ -137,7 +150,10 @@ const FileListComponent = () => {
   const BtnRefresh = (
     <Button
       title="Refresh"
-      onClick={() => listFilesAndDirectories(currentLocation)}
+      onClick={() => {
+        listFilesAndDirectories(currentLocation);
+        setFilter('');
+      }}
     >
       <i className="bi bi-arrow-clockwise"></i>
     </Button>
@@ -237,7 +253,20 @@ const FileListComponent = () => {
                     </Button>
                   ) : (
                     <>
+                      {/* <i className={getIconForFile(item.name)}></i> {item.name} */}
                       <i className={getIconForFile(item.name)}></i> {item.name}
+                      {item.name.includes('mp4') && (
+                        <Button
+                          variant="outline-primary"
+                          onClick={() =>
+                            handleOpenMediaPlayer(
+                              `file://${currentLocation}/${item.name}`
+                            )
+                          }
+                        >
+                          <i className="bi bi-play-fill"></i> Play
+                        </Button>
+                      )}
                     </>
                   )}
                 </td>
@@ -330,6 +359,9 @@ const FileListComponent = () => {
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && TableDirsFiles}
       {ShowModal}
+      {showMediaPlayer && (
+        <MediaPlayer url={mediaPlayerUrl} onClose={handleCloseMediaPlayer} />
+      )}
     </>
   );
 };

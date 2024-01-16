@@ -1,16 +1,17 @@
 from fastapi import APIRouter
 import subprocess
 import os
-from dotenv import load_dotenv
+
 URL = '/api/shell'
 
-# Load environment variables from .env file
-load_dotenv()
 
 router = APIRouter()
 
 current_location = "/home/"
-allowed_commands = os.getenv("ALLOWED_COMMANDS").split(",")
+
+allowed_commands = ['ls', 'pwd', 'cd', 'touch', 'nano', 'rm',
+                    'mkdir', 'rmdir', 'echo', 'grep', 'cat', 'zip', 'unzip', 'wc']
+
 
 @router.post(URL)
 async def execute_command(command: str):
@@ -26,14 +27,13 @@ async def execute_command(command: str):
                 if new_dir.startswith('/'):
                     current_location = os.path.abspath(new_dir)
                 else:
-                    current_location = os.path.abspath(os.path.join(current_location, new_dir))
+                    current_location = os.path.abspath(
+                        os.path.join(current_location, new_dir))
 
-        result = subprocess.run(command, shell=True, capture_output=True, text=True, cwd=current_location)
+        result = subprocess.run(
+            command, shell=True, capture_output=True, text=True, cwd=current_location)
         output = result.stdout.strip()
 
         return {"output": output, "location": current_location}
     except Exception as e:
         return {"error": f"Error executing command: {str(e)}", "location": current_location}
-
-
-

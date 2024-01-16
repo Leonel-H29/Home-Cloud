@@ -1,0 +1,6 @@
+.vscode/
+venv/
+dev.env
+.gitignore
+.dockerignore
+Backend.Dockerfile

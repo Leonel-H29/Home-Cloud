@@ -9,6 +9,7 @@ export function useFilterData() {
 
   return {
     filter,
+    setFilter,
     handleFilterChange,
   };
 }
