@@ -1,6 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, Query, HTTPException
 from fastapi.responses import FileResponse, JSONResponse
-from os import getcwd, remove, path, rename
+from os import getcwd, remove, path, rename, makedirs
+from pathlib import Path
 
 
 URL = '/api/file'
@@ -91,11 +92,44 @@ async def rename_move_file(name_file: str, new_name: str = None, current_locatio
 
 
 @router.get(URL + "/{name_file}")
-def get_file(name_file: str):
+def get_file(name_file: str, location: str = Query(".")):
     """
     Endpoint to obtain one determinated file
     """
-    return FileResponse(getcwd() + "/" + name_file)
+
+    
+    # Generate the full path of the file
+    file_path = path.join(getcwd(), location, name_file)
+
+    if not path.exists(file_path):
+            return JSONResponse(
+                content={"message": "File not found"},
+                status_code=404
+            )
+
+    # Get the static file directory
+    static_dir = "static" + location
+
+    # Crea la estructura de directorios en el directorio de archivos estáticos
+    static_path = Path(getcwd()) / static_dir
+    makedirs(static_path, exist_ok=True)
+
+    # Create the directory structure in the static files directory
+    static_file_path = static_path / name_file
+
+    
+    #Copy the file to the static file directory
+    with open(file_path, "rb") as src, open(static_file_path, "wb") as dest:
+        dest.write(src.read())
+
+    if not path.exists(static_file_path):
+            return JSONResponse(
+                content={"message": "File not found"},
+                status_code=404
+            )
+
+   # Returns the URL of the file in the static files directory
+    return {"file_url": f"/{static_dir}/{name_file}"}
 
 
 @router.get(URL + "/download/{name_file}")

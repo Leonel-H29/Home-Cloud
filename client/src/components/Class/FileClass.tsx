@@ -9,6 +9,16 @@ export class FileClass extends ServerClass {
     super();
   }
 
+  GetFile = async (location: string, file: string) => {
+    const queryString = `${file}?location=${location}`;
+    return await axios.get(this.UrlAPI + `/${queryString}`, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      withCredentials: false,
+    });
+  };
+
   CreateFile = async (location: string, name: string, extension: string) => {
     const query = `?location=${location}&name=${name}&extension=${extension}`;
     return await axios.post(this.UrlAPI + `/create${query}`, {

@@ -260,7 +260,7 @@ const FileListComponent = () => {
                           variant="outline-primary"
                           onClick={() =>
                             handleOpenMediaPlayer(
-                              `file://${currentLocation}/${item.name}`
+                              `${currentLocation}/${item.name}`
                             )
                           }
                         >
