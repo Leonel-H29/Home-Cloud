@@ -4,8 +4,14 @@ import FileMove from '../Files/FileMove';
 import FileUpload from '../Files/FileUpload';
 import FileRename from '../Files/FileRename';
 import FileDownload from '../Files/FileDownload';
-import { ModalSelectProps, ModalProps } from '../Interfaces/IModal';
+import {
+  ModalSelectProps,
+  ModalProps,
+  ModalShowContentsProps,
+} from '../Interfaces/IModal';
 import MediaPlayer from '../Preview/MediaPlayer';
+import React from 'react';
+import Images from '../Preview/Images';
 
 export const ModalFileRename: React.FC<ModalSelectProps> = ({
   show,
@@ -111,12 +117,26 @@ export const ModalFileCreate: React.FC<ModalProps> = ({
   </>
 );
 
-export const ModalPlayVideo = ({ handleClose, location, selected }) => (
+export const ModalPlayMedia: React.FC<ModalShowContentsProps> = ({
+  handleClose,
+  location,
+  selected,
+}) => (
   <>
     <MediaPlayer
       selected={selected}
       location={location}
       handleClose={handleClose}
     />
+  </>
+);
+
+export const ModalViewImages: React.FC<ModalShowContentsProps> = ({
+  handleClose,
+  location,
+  selected,
+}) => (
+  <>
+    <Images selected={selected} location={location} handleClose={handleClose} />
   </>
 );

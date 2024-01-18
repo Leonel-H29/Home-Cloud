@@ -21,6 +21,7 @@ import {
   BtnPlusDirectory,
   BtnPlusFile,
   BtnPlayVideo,
+  BtnViewImage,
 } from '../Buttons/Buttons';
 import { ModalShow } from '../Modal/ModalMain';
 import {
@@ -31,6 +32,7 @@ import {
 import { useLoading } from '../../hooks/useLoading';
 import { Loading } from '../Loading/Loading';
 import { isMediaFile } from '../../hooks/useMediaPlayer';
+import { isImageFile } from '../Preview/Images';
 // import useMediaPlayer from '../../hooks/useMediaPlayer';
 // import MediaPlayer from '../Preview/MediaPlayer';
 
@@ -277,7 +279,18 @@ const FileListComponent = () => {
                           handlePlay={() =>
                             handleModal(
                               SelectType.File,
-                              OperationType.PlayVideo
+                              OperationType.PlayMedia
+                            )
+                          }
+                          selected={selected}
+                        />
+                      )}
+                      {isImageFile(item.name) && (
+                        <BtnViewImage
+                          handlePlay={() =>
+                            handleModal(
+                              SelectType.File,
+                              OperationType.ViewImage
                             )
                           }
                           selected={selected}

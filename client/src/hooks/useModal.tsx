@@ -7,7 +7,8 @@ export enum OperationType {
   Upload = 'UPLOAD',
   Create = 'CREATE',
   Download = 'DOWNLOAD',
-  PlayVideo = 'PLAY_VIDEO',
+  PlayMedia = 'PLAY_MEDIA',
+  ViewImage = 'VIEW_IMAGE',
   None = '',
 }
 

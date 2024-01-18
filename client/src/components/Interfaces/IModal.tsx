@@ -12,3 +12,9 @@ export interface ModalProps {
   location: string;
   updateList: (location: string) => void;
 }
+
+export interface ModalShowContentsProps {
+  handleClose: React.Dispatch<React.SetStateAction<boolean>>;
+  location: string;
+  selected: string;
+}

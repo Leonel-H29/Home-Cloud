@@ -7,6 +7,8 @@ import {
   ModalFileDownload,
   ModalFileMove,
   ModalFileRename,
+  ModalPlayMedia,
+  ModalViewImages,
 } from './ModalFiles';
 import {
   ModalDirsCreate,
@@ -15,7 +17,6 @@ import {
   ModalDirsMove,
   ModalDirsRename,
 } from './ModalDirs';
-import ModalMediaPlayer from '../Preview/MediaPlayer';
 
 interface Modal {
   show: boolean;
@@ -35,7 +36,8 @@ const modalComponents = {
     UPLOAD: ModalFileUpload,
     CREATE: ModalFileCreate,
     DOWNLOAD: ModalFileDownload,
-    PLAY_VIDEO: ModalMediaPlayer,
+    PLAY_MEDIA: ModalPlayMedia,
+    VIEW_IMAGE: ModalViewImages,
   },
   DIRECTORY: {
     MOVE: ModalDirsMove,
