@@ -30,6 +30,7 @@ import {
 } from '../../hooks/useModal';
 import { useLoading } from '../../hooks/useLoading';
 import { Loading } from '../Loading/Loading';
+import { isMediaFile } from '../../hooks/useMediaPlayer';
 // import useMediaPlayer from '../../hooks/useMediaPlayer';
 // import MediaPlayer from '../Preview/MediaPlayer';
 
@@ -72,7 +73,7 @@ const FileListComponent = () => {
       try {
         const historyListString = localStorage.getItem('locationHistory');
 
-        if (!historyListString) {
+        if (!historyListString || historyListString === '[]') {
           listFilesAndDirectories();
           return;
         }
@@ -271,7 +272,7 @@ const FileListComponent = () => {
                     <>
                       {/* <i className={getIconForFile(item.name)}></i> {item.name} */}
                       <i className={getIconForFile(item.name)}></i> {item.name}
-                      {item.name.includes('mp4') && (
+                      {isMediaFile(item.name) && (
                         <BtnPlayVideo
                           handlePlay={() =>
                             handleModal(

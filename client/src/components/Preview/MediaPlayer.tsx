@@ -44,6 +44,7 @@ const MediaPlayer: React.FC<MediaPlayerProps> = ({
       <Modal.Body>
         {fileURL ? (
           <>
+            <h4>{selected}</h4>
             <ReactPlayer
               url={`http://localhost:8082${fileURL}`}
               controls

@@ -1,5 +1,16 @@
 // import { useState } from 'react';
 
+export function isMediaFile(item: string) {
+  // Regular expression with extensions for video and audio files
+  const regex = /\.(mp4|mp3|avi|mkv|mov|wmv|flv|ogg|wav|wma)$/i;
+
+  // Test the string against the regular expression
+  const hasExtension = regex.test(item);
+
+  // Return true if the string has the specified extension, false otherwise
+  return hasExtension;
+}
+
 // interface UseMediaPlayer {
 //   showMediaPlayer: boolean;
 //   setShowMediaPlayer: React.Dispatch<React.SetStateAction<boolean>>;
