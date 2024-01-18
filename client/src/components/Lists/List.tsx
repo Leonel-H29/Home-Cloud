@@ -20,6 +20,7 @@ import {
   BtnConfigDirectory,
   BtnPlusDirectory,
   BtnPlusFile,
+  BtnPlayVideo,
 } from '../Buttons/Buttons';
 import { ModalShow } from '../Modal/ModalMain';
 import {
@@ -29,8 +30,8 @@ import {
 } from '../../hooks/useModal';
 import { useLoading } from '../../hooks/useLoading';
 import { Loading } from '../Loading/Loading';
-import useMediaPlayer from '../../hooks/useMediaPlayer';
-import MediaPlayer from '../Preview/MediaPlayer';
+// import useMediaPlayer from '../../hooks/useMediaPlayer';
+// import MediaPlayer from '../Preview/MediaPlayer';
 
 interface Item {
   name: string;
@@ -65,13 +66,13 @@ const FileListComponent = () => {
 
   const { filter, setFilter, handleFilterChange } = useFilterData();
 
-  const {
-    showMediaPlayer,
-    mediaPlayerUrl,
+  // const {
+  //   showMediaPlayer,
+  //   mediaPlayerUrl,
 
-    handleOpenMediaPlayer,
-    handleCloseMediaPlayer,
-  } = useMediaPlayer();
+  //   handleOpenMediaPlayer,
+  //   handleCloseMediaPlayer,
+  // } = useMediaPlayer();
 
   const IServer = new ServerClass();
 
@@ -256,16 +257,15 @@ const FileListComponent = () => {
                       {/* <i className={getIconForFile(item.name)}></i> {item.name} */}
                       <i className={getIconForFile(item.name)}></i> {item.name}
                       {item.name.includes('mp4') && (
-                        <Button
-                          variant="outline-primary"
-                          onClick={() =>
-                            handleOpenMediaPlayer(
-                              `${currentLocation}/${item.name}`
+                        <BtnPlayVideo
+                          handlePlay={() =>
+                            handleModal(
+                              SelectType.File,
+                              OperationType.PlayVideo
                             )
                           }
-                        >
-                          <i className="bi bi-play-fill"></i> Play
-                        </Button>
+                          selected={selected}
+                        />
                       )}
                     </>
                   )}
@@ -359,9 +359,6 @@ const FileListComponent = () => {
       {error && <Alert variant="danger">{error}</Alert>}
       {!loading && !error && TableDirsFiles}
       {ShowModal}
-      {showMediaPlayer && (
-        <MediaPlayer url={mediaPlayerUrl} onClose={handleCloseMediaPlayer} />
-      )}
     </>
   );
 };

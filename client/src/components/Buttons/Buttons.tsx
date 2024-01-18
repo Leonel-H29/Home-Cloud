@@ -1,4 +1,4 @@
-import { Dropdown, ButtonGroup } from 'react-bootstrap';
+import { Dropdown, ButtonGroup, Button } from 'react-bootstrap';
 
 interface BtnConfigProps {
   handleRename: () => void;
@@ -113,4 +113,10 @@ export const BtnPlusDirectory: React.FC<BtnPlusFileProps> = ({
       </Dropdown.Item>
     </Dropdown.Menu>
   </Dropdown>
+);
+
+export const BtnPlayVideo = ({ handlePlay, selected }) => (
+  <Button variant="primary" onClick={handlePlay} hidden={selected.length !== 1}>
+    <i className="bi bi-play-fill"></i> Play
+  </Button>
 );

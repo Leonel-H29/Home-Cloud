@@ -5,6 +5,7 @@ import FileUpload from '../Files/FileUpload';
 import FileRename from '../Files/FileRename';
 import FileDownload from '../Files/FileDownload';
 import { ModalSelectProps, ModalProps } from '../Interfaces/IModal';
+import MediaPlayer from '../Preview/MediaPlayer';
 
 export const ModalFileRename: React.FC<ModalSelectProps> = ({
   show,
@@ -106,6 +107,16 @@ export const ModalFileCreate: React.FC<ModalProps> = ({
       handleClose={handleClose}
       location={location}
       updateList={updateList}
+    />
+  </>
+);
+
+export const ModalPlayVideo = ({ handleClose, location, selected }) => (
+  <>
+    <MediaPlayer
+      selected={selected}
+      location={location}
+      handleClose={handleClose}
     />
   </>
 );

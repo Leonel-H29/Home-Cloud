@@ -15,6 +15,7 @@ import {
   ModalDirsMove,
   ModalDirsRename,
 } from './ModalDirs';
+import ModalMediaPlayer from '../Preview/MediaPlayer';
 
 interface Modal {
   show: boolean;
@@ -34,6 +35,7 @@ const modalComponents = {
     UPLOAD: ModalFileUpload,
     CREATE: ModalFileCreate,
     DOWNLOAD: ModalFileDownload,
+    PLAY_VIDEO: ModalMediaPlayer,
   },
   DIRECTORY: {
     MOVE: ModalDirsMove,
@@ -56,11 +58,11 @@ export const ModalShow: React.FC<Modal> = ({
   const SelectedModal = modalComponents[type]?.[operation] || null;
 
   return (
-    <Modal show={show} onHide={() => handleClose(false)}>
+    <Modal show={show} onHide={() => handleClose(false)} size="lg" centered>
       {SelectedModal && (
         <>
           <Modal.Header closeButton>
-            <Modal.Title>
+            <Modal.Title id="contained-modal-title-vcenter">
               {operation.toUpperCase()} {type.toUpperCase()}
             </Modal.Title>
           </Modal.Header>
