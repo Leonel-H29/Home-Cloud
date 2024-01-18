@@ -58,7 +58,6 @@ const FileListComponent = () => {
     useModalFileOrDir();
 
   const [currentLocation, setCurrentLocation] = useState<string>(location);
-  // const [loading, setLoading] = useState(false);
   const { loading, setLoading } = useLoading();
   const [error, setError] = useState('');
 
@@ -66,18 +65,34 @@ const FileListComponent = () => {
 
   const { filter, setFilter, handleFilterChange } = useFilterData();
 
-  // const {
-  //   showMediaPlayer,
-  //   mediaPlayerUrl,
-
-  //   handleOpenMediaPlayer,
-  //   handleCloseMediaPlayer,
-  // } = useMediaPlayer();
-
   const IServer = new ServerClass();
 
   useEffect(() => {
-    listFilesAndDirectories();
+    const fetchData = async () => {
+      try {
+        const historyListString = localStorage.getItem('locationHistory');
+
+        if (!historyListString) {
+          listFilesAndDirectories();
+          return;
+        }
+
+        const historyList = JSON.parse(historyListString);
+
+        if (historyList.length == 0) {
+          listFilesAndDirectories();
+          return;
+        }
+
+        const lastLocation = historyList[historyList.length - 1];
+        console.log('Last: ', lastLocation);
+        listFilesAndDirectories(lastLocation);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
