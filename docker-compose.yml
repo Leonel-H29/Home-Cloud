@@ -13,6 +13,7 @@ services:
     volumes:
       - /media:/media # Mount /media from the host to /media in the container
       - /mnt:/mnt # Mount /mnt from the host to /mnt in the container
+      - static:/app/static
     networks:
       - homeserver-network
 
@@ -30,6 +31,9 @@ services:
       - homeserver-network
     depends_on:
       - server
+
+volumes:
+  static:
 
 networks:
   homeserver-network:

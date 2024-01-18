@@ -4,3 +4,4 @@ dev.env
 .gitignore
 .dockerignore
 Backend.Dockerfile
+static/
