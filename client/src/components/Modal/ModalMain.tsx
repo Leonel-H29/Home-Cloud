@@ -9,6 +9,7 @@ import {
   ModalFileRename,
   ModalPlayMedia,
   ModalViewImages,
+  ModalViewDocuments,
 } from './ModalFiles';
 import {
   ModalDirsCreate,
@@ -38,6 +39,7 @@ const modalComponents = {
     DOWNLOAD: ModalFileDownload,
     PLAY_MEDIA: ModalPlayMedia,
     VIEW_IMAGE: ModalViewImages,
+    VIEW_DOCUMENT: ModalViewDocuments,
   },
   DIRECTORY: {
     MOVE: ModalDirsMove,

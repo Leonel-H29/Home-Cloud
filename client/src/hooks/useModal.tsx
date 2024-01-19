@@ -9,6 +9,7 @@ export enum OperationType {
   Download = 'DOWNLOAD',
   PlayMedia = 'PLAY_MEDIA',
   ViewImage = 'VIEW_IMAGE',
+  ViewDocument = 'VIEW_DOCUMENT',
   None = '',
 }
 

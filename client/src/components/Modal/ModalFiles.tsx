@@ -12,6 +12,7 @@ import {
 import MediaPlayer from '../Preview/MediaPlayer';
 import React from 'react';
 import Images from '../Preview/Images';
+import Documents from '../Preview/Documents';
 
 export const ModalFileRename: React.FC<ModalSelectProps> = ({
   show,
@@ -138,5 +139,19 @@ export const ModalViewImages: React.FC<ModalShowContentsProps> = ({
 }) => (
   <>
     <Images selected={selected} location={location} handleClose={handleClose} />
+  </>
+);
+
+export const ModalViewDocuments: React.FC<ModalShowContentsProps> = ({
+  handleClose,
+  location,
+  selected,
+}) => (
+  <>
+    <Documents
+      selected={selected}
+      location={location}
+      handleClose={handleClose}
+    />
   </>
 );

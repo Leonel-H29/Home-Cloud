@@ -120,7 +120,12 @@ export const BtnPlayVideo: React.FC<BtnMediaProps> = ({
   handlePlay,
   selected,
 }) => (
-  <Button variant="primary" onClick={handlePlay} hidden={selected.length !== 1}>
+  <Button
+    variant="primary"
+    onClick={handlePlay}
+    hidden={selected.length !== 1}
+    size="sm"
+  >
     <i className="bi bi-play-fill"></i> Play
   </Button>
 );
@@ -129,7 +134,26 @@ export const BtnViewImage: React.FC<BtnMediaProps> = ({
   handlePlay,
   selected,
 }) => (
-  <Button variant="primary" onClick={handlePlay} hidden={selected.length !== 1}>
+  <Button
+    variant="primary"
+    onClick={handlePlay}
+    hidden={selected.length !== 1}
+    size="sm"
+  >
+    <i className="bi bi-play-fill"></i> View
+  </Button>
+);
+
+export const BtnViewDocument: React.FC<BtnMediaProps> = ({
+  handlePlay,
+  selected,
+}) => (
+  <Button
+    variant="primary"
+    onClick={handlePlay}
+    hidden={selected.length !== 1}
+    size="sm"
+  >
     <i className="bi bi-play-fill"></i> View
   </Button>
 );
