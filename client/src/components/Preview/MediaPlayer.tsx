@@ -3,19 +3,16 @@ import ReactPlayer from 'react-player';
 import { FileClass } from '../Class/FileClass';
 import { Button, Modal } from 'react-bootstrap';
 import { Loading } from '../Loading/Loading';
+import { ModalShowContentsProps } from '../Interfaces/IModal';
 
-interface MediaPlayerProps {
-  selected: string;
-  location: string;
-  handleClose: (value: boolean) => void;
-}
-
-const MediaPlayer: React.FC<MediaPlayerProps> = ({
+const MediaPlayer: React.FC<ModalShowContentsProps> = ({
   selected,
   location,
   handleClose,
 }) => {
   const [fileURL, setFileURL] = useState<string | null>(null);
+  const var_env = import.meta.env.VITE_BACKEND_URL;
+  const URL_Media = var_env.substring(0, var_env.lastIndexOf('/api'));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,7 +43,7 @@ const MediaPlayer: React.FC<MediaPlayerProps> = ({
           <>
             <h4>{selected}</h4>
             <ReactPlayer
-              url={`http://localhost:8082${fileURL}`}
+              url={`${URL_Media}${fileURL}`}
               controls
               width="100%"
               height="100%"

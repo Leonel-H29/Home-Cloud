@@ -2,12 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FileClass } from '../Class/FileClass';
 import { Button, Card, Container, Modal } from 'react-bootstrap';
 import { Loading } from '../Loading/Loading';
-
-interface ImagesProps {
-  selected: string;
-  location: string;
-  handleClose: (value: boolean) => void;
-}
+import { ModalShowContentsProps } from '../Interfaces/IModal';
 
 export function isImageFile(item: string) {
   // Regular expression with extensions for image files
@@ -20,8 +15,14 @@ export function isImageFile(item: string) {
   return hasExtension;
 }
 
-const Images: React.FC<ImagesProps> = ({ selected, location, handleClose }) => {
+const Images: React.FC<ModalShowContentsProps> = ({
+  selected,
+  location,
+  handleClose,
+}) => {
   const [fileURL, setFileURL] = useState<string | null>(null);
+  const var_env = import.meta.env.VITE_BACKEND_URL;
+  const URL_Media = var_env.substring(0, var_env.lastIndexOf('/api'));
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,7 +55,7 @@ const Images: React.FC<ImagesProps> = ({ selected, location, handleClose }) => {
               <Card.Title>{selected}</Card.Title>
               <Card.Img
                 variant="top"
-                src={`http://localhost:8082${fileURL}`}
+                src={`${URL_Media}${fileURL}`}
                 className="mx-auto d-block"
               />
             </Card>
