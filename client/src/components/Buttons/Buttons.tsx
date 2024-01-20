@@ -1,22 +1,13 @@
 import { Dropdown, ButtonGroup, Button } from 'react-bootstrap';
-import { BtnMediaProps } from '../Interfaces/IButtons';
+import { BtnConfigProps, BtnMediaProps } from '../Interfaces/IButtons';
 
-interface BtnConfigProps {
-  handleRename: () => void;
-  handleMove: () => void;
-  handleDownload: () => void;
-  handleDelete: () => void;
-  selected: string[];
-}
-
-export const BtnConfigFile: React.FC<BtnConfigProps> = ({
+const BtnConfig: React.FC<BtnConfigProps> = ({
   handleRename,
   handleMove,
   handleDownload,
   handleDelete,
-  selected,
 }) => (
-  <Dropdown as={ButtonGroup} hidden={selected.length !== 1}>
+  <Dropdown as={ButtonGroup}>
     <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
       <i className="bi bi-gear"></i>{' '}
     </Dropdown.Toggle>
@@ -38,87 +29,51 @@ export const BtnConfigFile: React.FC<BtnConfigProps> = ({
   </Dropdown>
 );
 
-export const BtnConfigDirectory: React.FC<BtnConfigProps> = ({
-  handleRename,
-  handleMove,
-  handleDownload,
-  handleDelete,
-  selected,
-}) => (
-  <Dropdown as={ButtonGroup} hidden={selected.length !== 1}>
-    <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
-      <i className="bi bi-gear"></i>{' '}
-    </Dropdown.Toggle>
+export default BtnConfig;
 
-    <Dropdown.Menu>
-      <Dropdown.Item onClick={handleRename} title="Rename">
-        Rename
-      </Dropdown.Item>
-      <Dropdown.Item onClick={handleMove} title="Move">
-        Move
-      </Dropdown.Item>
-      <Dropdown.Item onClick={handleDownload} title="Download">
-        Download
-      </Dropdown.Item>
-      <Dropdown.Item onClick={handleDelete} title="Delete">
-        Delete
-      </Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
-);
-
-interface BtnPlusFileProps {
+interface BtnPlusProps {
   handleUpload: () => void;
   handleCreate: () => void;
+  isDirectory: boolean;
 }
 
-export const BtnPlusFile: React.FC<BtnPlusFileProps> = ({
+export const BtnPlus: React.FC<BtnPlusProps> = ({
   handleUpload,
   handleCreate,
-}) => (
-  <Dropdown as={ButtonGroup}>
-    <Dropdown.Toggle split id="dropdown-split-basic" title="File options">
-      <i className="bi bi-file-earmark-plus"></i>{' '}
-    </Dropdown.Toggle>
+  isDirectory,
+}) => {
+  const uploadText = isDirectory
+    ? 'Upload a exists directory'
+    : 'Upload a exists file';
+  const createText = isDirectory
+    ? 'Create a new directory'
+    : 'Create a new file';
+  const iconClassname = isDirectory
+    ? 'bi bi-folder-plus'
+    : 'bi bi-file-earmark-plus';
 
-    <Dropdown.Menu>
-      <Dropdown.Item onClick={handleUpload} title="Upload a exists file">
-        Upload a exists file
-      </Dropdown.Item>
-      <Dropdown.Item title="Create a new file" onClick={handleCreate}>
-        Create a new file
-      </Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
-);
+  return (
+    <Dropdown as={ButtonGroup}>
+      <Dropdown.Toggle split id="dropdown-split-basic" title="Options">
+        <i className={iconClassname}></i>{' '}
+      </Dropdown.Toggle>
 
-export const BtnPlusDirectory: React.FC<BtnPlusFileProps> = ({
-  handleUpload,
-  handleCreate,
-}) => (
-  <Dropdown as={ButtonGroup}>
-    <Dropdown.Toggle
-      split
-      id="dropdown-split-basic"
-      title="Directories options"
-    >
-      <i className="bi bi-folder-plus"></i>{' '}
-    </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item onClick={handleUpload} title={uploadText}>
+          {uploadText}
+        </Dropdown.Item>
+        <Dropdown.Item title={createText} onClick={handleCreate}>
+          {createText}
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+};
 
-    <Dropdown.Menu>
-      <Dropdown.Item title="Upload a exists directory" onClick={handleUpload}>
-        Upload a exists directory
-      </Dropdown.Item>
-      <Dropdown.Item title="Create a new directory" onClick={handleCreate}>
-        Create a new directory
-      </Dropdown.Item>
-    </Dropdown.Menu>
-  </Dropdown>
-);
-
-export const BtnPlayVideo: React.FC<BtnMediaProps> = ({
+export const BtnMedia: React.FC<BtnMediaProps> = ({
   handlePlay,
   selected,
+  buttonText,
 }) => (
   <Button
     variant="primary"
@@ -126,34 +81,6 @@ export const BtnPlayVideo: React.FC<BtnMediaProps> = ({
     hidden={selected.length !== 1}
     size="sm"
   >
-    <i className="bi bi-play-fill"></i> Play
-  </Button>
-);
-
-export const BtnViewImage: React.FC<BtnMediaProps> = ({
-  handlePlay,
-  selected,
-}) => (
-  <Button
-    variant="primary"
-    onClick={handlePlay}
-    hidden={selected.length !== 1}
-    size="sm"
-  >
-    <i className="bi bi-play-fill"></i> View
-  </Button>
-);
-
-export const BtnViewDocument: React.FC<BtnMediaProps> = ({
-  handlePlay,
-  selected,
-}) => (
-  <Button
-    variant="primary"
-    onClick={handlePlay}
-    hidden={selected.length !== 1}
-    size="sm"
-  >
-    <i className="bi bi-play-fill"></i> View
+    <i className="bi bi-play-fill"></i> {buttonText}
   </Button>
 );

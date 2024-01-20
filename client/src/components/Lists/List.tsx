@@ -15,15 +15,7 @@ import { ServerClass } from '../Class/ServerClass';
 import { useLocationServer } from '../../hooks/useLocation';
 import { useFilterData } from '../../hooks/useFilterData';
 import { useSelected } from '../../hooks/useSelected';
-import {
-  BtnConfigFile,
-  BtnConfigDirectory,
-  BtnPlusDirectory,
-  BtnPlusFile,
-  BtnPlayVideo,
-  BtnViewImage,
-  BtnViewDocument,
-} from '../Buttons/Buttons';
+import BtnConfig, { BtnPlus, BtnMedia } from '../Buttons/Buttons';
 import { ModalShow } from '../Modal/ModalMain';
 import {
   useModalFileOrDir,
@@ -32,8 +24,7 @@ import {
 } from '../../hooks/useModal';
 import { useLoading } from '../../hooks/useLoading';
 import { Loading } from '../Loading/Loading';
-import { isMediaFile } from '../../hooks/useMediaPlayer';
-import { isImageFile } from '../Preview/Images';
+import { useType } from '../../hooks/useType';
 
 interface Item {
   name: string;
@@ -55,17 +46,14 @@ const FileListComponent = () => {
   } = useLocationServer();
 
   const [contents, setContents] = useState<Item[]>([]);
-
   const { showModal, operation, type, handleModal, setShowModal } =
     useModalFileOrDir();
-
   const [currentLocation, setCurrentLocation] = useState<string>(location);
   const { loading, setLoading } = useLoading();
   const [error, setError] = useState('');
-
   const { selected, setSelected, handleSelectedClick } = useSelected();
-
   const { filter, setFilter, handleFilterChange } = useFilterData();
+  const { isImageFile, isMediaFile } = useType();
 
   const IServer = new ServerClass();
 
@@ -274,8 +262,8 @@ const FileListComponent = () => {
                       {/* <i className={getIconForFile(item.name)}></i> {item.name} */}
                       <i className={getIconForFile(item.name)}></i> {item.name}
                       &nbsp;
-                      {isMediaFile(item.name) && (
-                        <BtnPlayVideo
+                      {isMediaFile(item.name) ? (
+                        <BtnMedia
                           handlePlay={() =>
                             handleModal(
                               SelectType.File,
@@ -283,10 +271,10 @@ const FileListComponent = () => {
                             )
                           }
                           selected={selected}
+                          buttonText="Play"
                         />
-                      )}
-                      {isImageFile(item.name) ? (
-                        <BtnViewImage
+                      ) : isImageFile(item.name) ? (
+                        <BtnMedia
                           handlePlay={() =>
                             handleModal(
                               SelectType.File,
@@ -294,9 +282,10 @@ const FileListComponent = () => {
                             )
                           }
                           selected={selected}
+                          buttonText="View"
                         />
                       ) : (
-                        <BtnViewDocument
+                        <BtnMedia
                           handlePlay={() =>
                             handleModal(
                               SelectType.File,
@@ -304,52 +293,54 @@ const FileListComponent = () => {
                             )
                           }
                           selected={selected}
+                          buttonText="View"
                         />
                       )}
                     </>
                   )}
                 </td>
+
                 <td>{item.type}</td>
                 <td>{item.owner}</td>
                 <td>{item.created}</td>
                 <td>{item.last_modified}</td>
                 <td>{item.size}</td>
                 <td>
-                  {item.type === 'Directory' ? (
-                    <BtnConfigDirectory
-                      handleRename={() =>
-                        handleModal(SelectType.Directoy, OperationType.Rename)
-                      }
-                      handleMove={() =>
-                        handleModal(SelectType.Directoy, OperationType.Move)
-                      }
-                      handleDelete={() =>
-                        handleModal(SelectType.Directoy, OperationType.Delete)
-                      }
-                      handleDownload={() =>
-                        handleModal(SelectType.Directoy, OperationType.Download)
-                      }
-                      selected={selected}
-                    />
-                  ) : (
-                    <>
-                      <BtnConfigFile
-                        handleRename={() =>
-                          handleModal(SelectType.File, OperationType.Rename)
-                        }
-                        handleMove={() =>
-                          handleModal(SelectType.File, OperationType.Move)
-                        }
-                        handleDelete={() =>
-                          handleModal(SelectType.File, OperationType.Delete)
-                        }
-                        handleDownload={() =>
-                          handleModal(SelectType.File, OperationType.Download)
-                        }
-                        selected={selected}
-                      />
-                    </>
-                  )}
+                  <BtnConfig
+                    handleRename={() =>
+                      handleModal(
+                        item.type === 'Directory'
+                          ? SelectType.Directoy
+                          : SelectType.File,
+                        OperationType.Rename
+                      )
+                    }
+                    handleMove={() =>
+                      handleModal(
+                        item.type === 'Directory'
+                          ? SelectType.Directoy
+                          : SelectType.File,
+                        OperationType.Move
+                      )
+                    }
+                    handleDelete={() =>
+                      handleModal(
+                        item.type === 'Directory'
+                          ? SelectType.Directoy
+                          : SelectType.File,
+                        OperationType.Delete
+                      )
+                    }
+                    handleDownload={() =>
+                      handleModal(
+                        item.type === 'Directory'
+                          ? SelectType.Directoy
+                          : SelectType.File,
+                        OperationType.Download
+                      )
+                    }
+                    selected={[]}
+                  />
                 </td>
               </tr>
             );
@@ -373,19 +364,21 @@ const FileListComponent = () => {
       >
         <ButtonGroup className="mb-2">
           {BtnRefresh}
-          <BtnPlusFile
+          <BtnPlus
             handleUpload={() =>
               handleModal(SelectType.File, OperationType.Upload)
             }
             handleCreate={() =>
               handleModal(SelectType.File, OperationType.Create)
             }
+            isDirectory={false}
           />
-          <BtnPlusDirectory
+          <BtnPlus
             handleUpload={() => alert('Modal')}
             handleCreate={() =>
               handleModal(SelectType.Directoy, OperationType.Create)
             }
+            isDirectory={true}
           />
         </ButtonGroup>
 

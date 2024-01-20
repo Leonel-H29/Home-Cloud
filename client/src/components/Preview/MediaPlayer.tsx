@@ -46,7 +46,7 @@ const MediaPlayer: React.FC<ModalShowContentsProps> = ({
               url={`${URL_Media}${fileURL}`}
               controls
               width="100%"
-              height="100%"
+              height="22.5rem"
             />
           </>
         ) : (

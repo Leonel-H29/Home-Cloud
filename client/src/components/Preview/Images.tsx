@@ -4,17 +4,6 @@ import { Button, Card, Container, Modal } from 'react-bootstrap';
 import { Loading } from '../Loading/Loading';
 import { ModalShowContentsProps } from '../Interfaces/IModal';
 
-export function isImageFile(item: string) {
-  // Regular expression with extensions for image files
-  const regex = /\.(jpg|jpeg|png|gif|bmp|tiff)$/i;
-
-  // Test the string against the regular expression
-  const hasExtension = regex.test(item);
-
-  // Return true if the string has the specified extension, false otherwise
-  return hasExtension;
-}
-
 const Images: React.FC<ModalShowContentsProps> = ({
   selected,
   location,

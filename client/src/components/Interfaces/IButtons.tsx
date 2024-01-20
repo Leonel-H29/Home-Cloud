@@ -9,4 +9,5 @@ export interface BtnConfigProps {
 export interface BtnMediaProps {
   handlePlay: () => void;
   selected: string[];
+  buttonText: string;
 }
