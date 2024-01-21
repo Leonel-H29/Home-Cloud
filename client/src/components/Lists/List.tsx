@@ -305,7 +305,7 @@ const FileListComponent = () => {
                 <td>{item.created}</td>
                 <td>{item.last_modified}</td>
                 <td>{item.size}</td>
-                <td>
+                <td hidden={selected.length == 0}>
                   <BtnConfig
                     handleRename={() =>
                       handleModal(
@@ -339,7 +339,7 @@ const FileListComponent = () => {
                         OperationType.Download
                       )
                     }
-                    selected={[]}
+                    selected={selected}
                   />
                 </td>
               </tr>

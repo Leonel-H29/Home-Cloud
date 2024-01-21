@@ -26,11 +26,26 @@ const Documents: React.FC<ModalShowContentsProps> = ({
           return;
         }
 
-        const IFile = new FileClass();
-        const response = await IFile.GetFile(location, selected);
+        const storedUrls = JSON.parse(localStorage.getItem('urlList') || '[]');
 
-        if (response.status === 200) {
-          setFileURL(response.data.file_url);
+        if (storedUrls.includes(location + selected)) {
+          console.log('Already inserted!');
+          // URL already in the list, use the cached URL
+          setFileURL(`/static${location}/${selected}`);
+        } else {
+          // URL not in the list, fetch from the server
+          const IFile = new FileClass();
+          const response = await IFile.GetFile(location, selected);
+
+          if (response.status === 200) {
+            const newUrl = response.data.file_url;
+
+            // Update the list and store it in local storage
+            const updatedUrls = [...storedUrls, location + selected];
+            localStorage.setItem('urlList', JSON.stringify(updatedUrls));
+
+            setFileURL(newUrl);
+          }
         }
       } catch (error) {
         console.error('Error fetching file:', error);
@@ -50,7 +65,9 @@ const Documents: React.FC<ModalShowContentsProps> = ({
           <>
             <h4>{selected}</h4>
             <DocViewer
-              documents={[{ uri: `${URL_Media}${fileURL}` }]}
+              documents={[
+                { uri: `${URL_Media}${fileURL}`, fileName: selected },
+              ]}
               pluginRenderers={DocViewerRenderers}
             />
           </>
