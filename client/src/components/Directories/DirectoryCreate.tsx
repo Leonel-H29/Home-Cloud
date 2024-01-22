@@ -23,7 +23,7 @@ const DirectoryCreate: React.FC<ModalProps> = ({
 
       const response = await IDir.CreateDirectory(queryString);
 
-      if (response.status == 200) {
+      if (response.status == 201) {
         showAlert({
           icon: 'success',
           title: `The directory '${dir_name}' createed successfully!`,

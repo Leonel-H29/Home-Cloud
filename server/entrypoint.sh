@@ -8,15 +8,23 @@ for x in $directories; do
 	rm -r $x
 done
 
+
+###I check if the static files directory already exists, if not it is created.
+###If the directory already exists, I check if at least one file exists and then copy them to the server in their respective directories.
+
 if [ -d "static" ]; then
-
     echo "Alredy exist directory to static files"
-
 else
     echo "Building static files directory ..."
     sleep 2
     mkdir static
 fi
+
+if [ "$(ls -A /app/static/)" ]; then
+    echo "Copying static files..."
+    cp -r /app/static/* /app/static/
+fi
+
 
 echo "Uploading server ..."
 sleep 2
