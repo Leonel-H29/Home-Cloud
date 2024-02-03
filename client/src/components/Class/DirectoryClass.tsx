@@ -9,7 +9,7 @@ export class DirectoryClass extends ServerClass {
   }
 
   CreateDirectory = async (query: string = '') => {
-    return await axios.post(this.UrlAPI + `/create/${query}`, {
+    return await axios.post(this.UrlAPI + `/create${query}`, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
