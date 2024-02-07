@@ -3,6 +3,7 @@ import './Terminal.css';
 import { TerminalClass } from '../Class/TerminalClass';
 import React from 'react';
 import { useLocationServer } from '../../hooks/useLocation';
+import { InputTerminalComponent } from './Input';
 
 const TerminalComponent = () => {
   const [commands, setCommands] = useState<string[]>([]); // Store all commands
@@ -71,48 +72,28 @@ const TerminalComponent = () => {
             {' '}
             {output.map((out, index) => (
               <React.Fragment key={index}>
-                <div className="input-line">
-                  <span className="green-text">:{listLocations[index]}$</span>
-                  <input
-                    className="command-input"
-                    type="text"
-                    value={commands[index]}
-                    onChange={(e) => {
-                      const newCommands = [...commands];
-                      newCommands[index] = e.target.value;
-                      setCommands(newCommands);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        handleCommand(commands[index]);
-                      }
-                    }}
-                    readOnly
-                  />
-                </div>
+                <InputTerminalComponent
+                  index={index}
+                  location={listLocations[index]}
+                  listCommands={commands}
+                  value={commands[index]}
+                  handleCommand={handleCommand}
+                  setCommands={setCommands}
+                  readonly={true}
+                />
                 <pre className="output">{out}</pre>
               </React.Fragment>
             ))}
           </div>
-          <div className="input-line">
-            <span className="green-text">:{location}$</span>
-            <input
-              ref={inputRef}
-              className="command-input"
-              type="text"
-              value={commands[output.length] || ''}
-              onChange={(e) => {
-                const newCommands = [...commands];
-                newCommands[output.length] = e.target.value;
-                setCommands(newCommands);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleCommand(commands[output.length] || '');
-                }
-              }}
-            />
-          </div>
+          <InputTerminalComponent
+            index={output.length}
+            location={location}
+            listCommands={commands}
+            value={commands[output.length] || ''}
+            handleCommand={handleCommand}
+            setCommands={setCommands}
+            readonly={false}
+          />
         </div>
       </div>
     </div>
