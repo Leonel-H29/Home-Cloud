@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form, Modal, ModalProps } from 'react-bootstrap';
 import { DirectoryClass } from '../Class/DirectoryClass';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const DirectoryCreate: React.FC<ModalProps> = ({
   show,
@@ -11,33 +11,23 @@ const DirectoryCreate: React.FC<ModalProps> = ({
 }) => {
   const [dir_name, setDir] = useState<string>('');
   const IDir = new DirectoryClass();
-  const showAlert = useCustomSwalTopEnd();
 
   const handleDirCreate = async () => {
     if (!location && !dir_name && !show) {
       console.error('Missing data');
       return;
     }
-    try {
-      const queryString = `${dir_name}?location=${location}`;
+    const queryString = `${dir_name}?location=${location}`;
 
-      const response = await IDir.CreateDirectory(queryString);
-
-      if (response.status == 201) {
-        showAlert({
-          icon: 'success',
-          title: `The directory '${dir_name}' createed successfully!`,
-        });
-      }
-    } catch (error) {
-      showAlert({
-        icon: 'error',
-        title: `Error creating '${dir_name}' directory`,
-      });
-    } finally {
-      handleClose(false);
-      updateList(location);
-    }
+    toast.promise(IDir.CreateDirectory(queryString), {
+      success: `The directory '${dir_name}' createed successfully`,
+      error: `Error creating '${dir_name}' directory`,
+      finally: () => {
+        handleClose(false);
+        updateList(location);
+      },
+      loading: 'Saving changes ...',
+    });
   };
 
   return (

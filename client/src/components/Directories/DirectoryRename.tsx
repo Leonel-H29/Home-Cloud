@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { ModalSelectProps } from '../Interfaces/IModal';
 import { DirectoryClass } from '../Class/DirectoryClass';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const DirectoryRename: React.FC<ModalSelectProps> = ({
   show,
@@ -13,13 +13,26 @@ const DirectoryRename: React.FC<ModalSelectProps> = ({
 }) => {
   const [newDirName, setNewDirName] = useState(selected);
   const IDir = new DirectoryClass();
-  const showAlert = useCustomSwalTopEnd();
+  //const showAlert = useCustomSwalTopEnd();
 
   const handleDirsRename = async () => {
     if (!show || !newDirName || !selected || !location) {
       console.error('Missing data');
       return;
     }
+    toast.promise(
+      IDir.RenameOrMoveDirectory(selected, newDirName, location, ''),
+      {
+        success: `The directory has be rename successfully!`,
+        error: `Error renaming directory`,
+        finally: () => {
+          handleClose(false);
+          updateList(location);
+        },
+        loading: 'Saving changes ...',
+      }
+    );
+    /*
     try {
       const response = await IDir.RenameOrMoveDirectory(
         selected,
@@ -46,6 +59,7 @@ const DirectoryRename: React.FC<ModalSelectProps> = ({
       //setShowModal(false);
       updateList(location);
     }
+    */
   };
 
   return (

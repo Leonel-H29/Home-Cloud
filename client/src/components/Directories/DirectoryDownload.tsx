@@ -1,9 +1,9 @@
 import { Button, Modal } from 'react-bootstrap';
 import { ModalSelectProps } from '../Interfaces/IModal';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
 import { DirectoryClass } from '../Class/DirectoryClass';
 import { useLoading } from '../../hooks/useLoading';
 import { Loading } from '../Loading/Loading';
+import { toast } from 'sonner';
 
 const DirectoryDownload: React.FC<ModalSelectProps> = ({
   show,
@@ -13,7 +13,6 @@ const DirectoryDownload: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const IDir = new DirectoryClass();
-  const showAlert = useCustomSwalTopEnd();
   const { loading, setLoading } = useLoading();
 
   const handleDirectoryDownload = async () => {
@@ -22,29 +21,17 @@ const DirectoryDownload: React.FC<ModalSelectProps> = ({
       return;
     }
 
-    try {
-      setLoading(true);
-      const response = await IDir.DownloadDirectory(selected, location);
-      handleClose(false);
-      console.log(response);
-
-      if (response.status == 200) {
-        showAlert({
-          icon: 'success',
-          title: `The directory download successfully!`,
-        });
-      }
-    } catch (error) {
-      showAlert({
-        icon: 'error',
-        title: `Error deleting directory!`,
-      });
-      console.error('Error downloading directory!: ', error);
-    } finally {
-      handleClose(false);
-      updateList(location);
-      setLoading(false);
-    }
+    setLoading(true);
+    toast.promise(IDir.DownloadDirectory(selected, location), {
+      success: `The file download successfully!`,
+      error: `Error dowloading file!`,
+      finally: () => {
+        handleClose(false);
+        updateList(location);
+        setLoading(false);
+      },
+      loading: 'Saving changes ...',
+    });
   };
 
   return (

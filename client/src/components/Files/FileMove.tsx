@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const FileMove: React.FC<ModalSelectProps> = ({
   show,
@@ -13,38 +13,22 @@ const FileMove: React.FC<ModalSelectProps> = ({
 }) => {
   const [newLocation, setNewLocation] = useState('');
   const IFile = new FileClass();
-  const showAlert = useCustomSwalTopEnd();
 
   const handleFileMove = async () => {
     if (!show || !selected || !newLocation || !location) {
       console.error('Missing data');
       return;
     }
-    try {
-      const response = await IFile.RenameOrMoveFile(
-        selected,
-        '',
-        location,
-        newLocation
-      );
-      //setShowModal(false);
 
-      if (response.status == 200) {
-        showAlert({
-          icon: 'success',
-          title: `The file has been moved successfully!`,
-        });
-      }
-    } catch (error) {
-      showAlert({
-        icon: 'error',
-        title: `Error moving file!`,
-      });
-      console.error('Error moving file!: ', error);
-    } finally {
-      updateList(newLocation);
-      handleClose(false);
-    }
+    toast.promise(IFile.RenameOrMoveFile(selected, '', location, newLocation), {
+      success: `The file has been moved successfully!`,
+      error: `Error moving file!`,
+      finally: () => {
+        handleClose(false);
+        updateList(location);
+      },
+      loading: 'Saving changes ...',
+    });
   };
 
   return (

@@ -3,7 +3,7 @@ import { Alert, Button, Form, Modal } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
 import { ModalProps } from '../Interfaces/IModal';
 import { useDropzone } from 'react-dropzone';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const FileUpload: React.FC<ModalProps> = ({
   show,
@@ -19,7 +19,6 @@ const FileUpload: React.FC<ModalProps> = ({
     useDropzone({ onDrop });
 
   const IFile = new FileClass();
-  const showAlert = useCustomSwalTopEnd();
 
   const handleFileUpload = async () => {
     if (!location && acceptedFiles.length == 0 && !show) {
@@ -30,23 +29,15 @@ const FileUpload: React.FC<ModalProps> = ({
       const formData = new FormData();
       formData.append('file', file);
 
-      try {
-        const response = await IFile.UploadFile(location, formData);
-        if (response.status == 200) {
-          showAlert({
-            icon: 'success',
-            title: `The file '${file.name}' uploaded successfully!`,
-          });
-        }
-      } catch (error) {
-        showAlert({
-          icon: 'error',
-          title: `Error uploading '${file.name}' file`,
-        });
-      } finally {
-        handleClose(false);
-        updateList(location);
-      }
+      toast.promise(IFile.UploadFile(location, formData), {
+        success: `The file '${file.name}' uploaded successfully!`,
+        error: `Error uploading '${file.name}' file`,
+        finally: () => {
+          handleClose(false);
+          updateList(location);
+        },
+        loading: 'Saving changes ...',
+      });
     });
   };
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const FileRename: React.FC<ModalSelectProps> = ({
   show,
@@ -13,38 +13,23 @@ const FileRename: React.FC<ModalSelectProps> = ({
 }) => {
   const [newfileName, setNewFileName] = useState(selected);
   const IFile = new FileClass();
-  const showAlert = useCustomSwalTopEnd();
+  // const showAlert = useCustomSwalTopEnd();
 
   const handleFileRename = async () => {
     if (!show || !newfileName || !selected || !location) {
       console.error('Missing data');
       return;
     }
-    try {
-      const response = await IFile.RenameOrMoveFile(
-        selected,
-        newfileName,
-        location,
-        ''
-      );
 
-      if (response.status == 200) {
+    toast.promise(IFile.RenameOrMoveFile(selected, newfileName, location, ''), {
+      success: `The file has be rename successfully!`,
+      error: `Error renaming file`,
+      finally: () => {
         handleClose(false);
-        showAlert({
-          icon: 'success',
-          title: `The file has be rename successfully!`,
-        });
-      }
-    } catch (error) {
-      showAlert({
-        icon: 'error',
-        title: `Error renaming file!`,
-      });
-      console.error('Error renaming file!: ', error);
-    } finally {
-      //setShowModal(false);
-      updateList(location);
-    }
+        updateList(location);
+      },
+      loading: 'Saving changes ...',
+    });
   };
 
   return (

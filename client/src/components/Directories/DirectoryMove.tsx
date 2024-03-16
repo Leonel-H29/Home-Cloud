@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
+import { DirectoryClass } from '../Class/DirectoryClass';
 
 const DirectoryMove: React.FC<ModalSelectProps> = ({
   show,
@@ -12,38 +12,26 @@ const DirectoryMove: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const [newLocation, setNewLocation] = useState('');
-  const IFile = new FileClass();
-  const showAlert = useCustomSwalTopEnd();
+  const IDir = new DirectoryClass();
 
   const handleDirectoryMove = async () => {
     if (!show || !selected || !newLocation || !location) {
       console.error('Missing data');
       return;
     }
-    try {
-      const response = await IFile.RenameOrMoveFile(
-        selected,
-        '',
-        location,
-        newLocation
-      );
-      //setShowModal(false);
-      if (response.status == 200) {
-        showAlert({
-          icon: 'success',
-          title: `The directory has been moved successfully!`,
-        });
+
+    toast.promise(
+      IDir.RenameOrMoveDirectory(selected, '', location, newLocation),
+      {
+        success: `The directory has been moved successfully!`,
+        error: `Error moving file!`,
+        finally: () => {
+          handleClose(false);
+          updateList(location);
+        },
+        loading: 'Saving changes ...',
       }
-    } catch (error) {
-      showAlert({
-        icon: 'error',
-        title: `Error moving directory!`,
-      });
-      console.error('Error moving directory!: ', error);
-    } finally {
-      updateList(newLocation);
-      handleClose(false);
-    }
+    );
   };
 
   return (

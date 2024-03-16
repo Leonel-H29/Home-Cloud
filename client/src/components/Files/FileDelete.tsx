@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { ModalSelectProps } from '../Interfaces/IModal';
 import { FileClass } from '../Class/FileClass';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const FileDelete: React.FC<ModalSelectProps> = ({
   show,
@@ -12,34 +12,24 @@ const FileDelete: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const IFile = new FileClass();
-  const showAlert = useCustomSwalTopEnd();
 
   const handleFileDelete = async () => {
     if (!show || !selected || !location) {
       console.error('Missing data');
       return;
     }
-    try {
-      const queryString = `${selected}?location=${location}`;
-      const response = await IFile.DeleteFile(queryString);
-      handleClose(false);
 
-      if (response.status == 200) {
-        showAlert({
-          icon: 'success',
-          title: `The file deleted successfully!`,
-        });
-      }
-    } catch (error) {
-      showAlert({
-        icon: 'error',
-        title: `Error deleting file!`,
-      });
-      console.error('Error deleting file!: ', error);
-    } finally {
-      //setShowModal(false);
-      updateList(location);
-    }
+    const queryString = `${selected}?location=${location}`;
+
+    toast.promise(IFile.DeleteFile(queryString), {
+      success: `The file '${selected}' deleted successfully!`,
+      error: `Error deleting file!`,
+      finally: () => {
+        handleClose(false);
+        updateList(location);
+      },
+      loading: 'Saving changes ...',
+    });
   };
 
   return (

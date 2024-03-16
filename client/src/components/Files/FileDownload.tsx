@@ -1,7 +1,8 @@
 import { Button, Modal } from 'react-bootstrap';
 import { FileClass } from '../Class/FileClass';
 import { ModalSelectProps } from '../Interfaces/IModal';
-import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+// import { useCustomSwalTopEnd } from '../../hooks/useSwal';
+import { toast } from 'sonner';
 
 const FileDownload: React.FC<ModalSelectProps> = ({
   show,
@@ -11,13 +12,23 @@ const FileDownload: React.FC<ModalSelectProps> = ({
   updateList,
 }) => {
   const IFile = new FileClass();
-  const showAlert = useCustomSwalTopEnd();
+  //const showAlert = useCustomSwalTopEnd();
   const handleFileDownload = async () => {
     if (!show || !selected || !location) {
       console.error('Missing data');
       return;
     }
 
+    toast.promise(IFile.DownloadFile(selected, location), {
+      success: `The file download successfully!`,
+      error: `Error deleting file!`,
+      finally: () => {
+        handleClose(false);
+        updateList(location);
+      },
+      loading: 'Saving changes ...',
+    });
+    /*
     try {
       const response = await IFile.DownloadFile(selected, location);
       handleClose(false);
@@ -37,6 +48,7 @@ const FileDownload: React.FC<ModalSelectProps> = ({
       handleClose(false);
       updateList(location);
     }
+    */
   };
 
   return (

@@ -4,8 +4,8 @@ import FileListComponent from './components/Lists/List';
 import TerminalComponent from './components/Terminal/Terminal';
 import NavBarComponent from './components/NavBar/NavBar';
 import { Card } from 'react-bootstrap';
-// import MainComponent from './components/Main/Main';
 import MainHeaderComponent, { WelcomeComponent } from './components/Main/Main';
+import { Toaster } from 'sonner';
 
 function App() {
   return (
@@ -27,6 +27,14 @@ function App() {
           </Routes>
         </Card.Body>
       </Card>
+      <Toaster
+        richColors
+        position="top-right"
+        duration={3000}
+        closeButton
+        visibleToasts={9}
+        expand
+      />
     </BrowserRouter>
   );
 }
