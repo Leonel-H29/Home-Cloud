@@ -16,6 +16,13 @@ async def create_file(name: str, extension: str, location: str = Query(".")):
     """
     file_name = f"{name}.{extension}"
     file_path = path.join(getcwd(), location, file_name)
+    
+    """
+    if path.exists(file_path):
+        return JSONResponse(content={
+            "message": f"File '{file_name}' already exists at '{location}''.",
+        }, status_code=409)
+    """
 
     try:
         with open(file_path, "w") as new_file:
@@ -34,12 +41,21 @@ async def upload_file(file: UploadFile = File(...), location: str = Query(".")):
     """
     Endpoint to upload one or many files
     """
-    file_dir = path.join(getcwd(), location, file.filename)
-    with open(file_dir, "wb") as Myfile:
-        content = await file.read()
-        Myfile.write(content)
-        Myfile.close()
-    return "Success"
+    try:
+        file_dir = path.join(getcwd(), location, file.filename)
+        with open(file_dir, "wb") as Myfile:
+            content = await file.read()
+            Myfile.write(content)
+            Myfile.close()
+        return JSONResponse(content={
+            "message": f"File '{file}' uploaded successfully in '{location}'.",
+            "path": file_dir
+        }, status_code=201)
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
+
+    
 
 
 @router.put(URL + "/edit/{name_file}")
@@ -51,7 +67,7 @@ async def rename_move_file(name_file: str, new_name: str = None, current_locatio
 
         if not path.exists(file_path):
             return JSONResponse(
-                content={"message": "File not found"},
+                content={"message": "File not found", "path": file_path},
                 status_code=404
             )
 
@@ -59,7 +75,7 @@ async def rename_move_file(name_file: str, new_name: str = None, current_locatio
             new_file_path = path.join(current_location, new_name)
             if path.exists(new_file_path):
                 return JSONResponse(
-                    content={"message": "File with new name already exists"},
+                    content={"message": "File with new name already exists", "path": file_path},
                     status_code=409
                 )
             # Rename file
@@ -71,7 +87,7 @@ async def rename_move_file(name_file: str, new_name: str = None, current_locatio
             new_location_path = path.join(current_location, new_location)
             if not path.exists(new_location_path):
                 return JSONResponse(
-                    content={"message": "New location not found"},
+                    content={"message": "New location not found", "path": file_path},
                     status_code=404
                 )
             # Move file to the new location
@@ -80,15 +96,12 @@ async def rename_move_file(name_file: str, new_name: str = None, current_locatio
             file_path = new_file_path
 
         return JSONResponse(
-            content={"message": "File renamed and/or moved successfully"},
+            content={"message": "File renamed and/or moved successfully", "path": file_path},
             status_code=200
         )
 
     except Exception as e:
-        return JSONResponse(
-            content={"message": str(e)},
-            status_code=500
-        )
+        raise HTTPException(status_code=500, detail=f"Failed renamed and/or moved file: {str(e)}")
 
 
 @router.get(URL + "/{name_file}")
@@ -103,7 +116,7 @@ def get_file(name_file: str, location: str = Query(".")):
 
     if not path.exists(file_path):
             return JSONResponse(
-                content={"message": "File not found"},
+                content={"message": "File not found", "path": file_path},
                 status_code=404
             )
 
@@ -124,12 +137,17 @@ def get_file(name_file: str, location: str = Query(".")):
 
     if not path.exists(static_file_path):
             return JSONResponse(
-                content={"message": "File not found"},
+                content={"message": "File not found" , "path": file_path},
                 status_code=404
             )
 
    # Returns the URL of the file in the static files directory
-    return {"file_url": f"/{static_dir}/{name_file}"}
+    #return {"file_url": f"/{static_dir}/{name_file}"}
+    return JSONResponse(
+                content={"file_url": f"/{static_dir}/{name_file}"},
+                status_code=200
+            )
+
 
 
 @router.get(URL + "/download/{name_file}")
@@ -137,9 +155,19 @@ def download_file(name_file: str, location: str = Query(".")):
     """
     Endpoint to download one determinated file
     """
-    mediaType = "application/octet-stream"
-    file_dir = path.join(getcwd(), location, name_file)
-    return FileResponse(file_dir, media_type=mediaType, filename=name_file)
+    try:
+        mediaType = "application/octet-stream"
+        file_dir = path.join(getcwd(), location, name_file)
+   
+        return FileResponse(file_dir, media_type=mediaType, filename=name_file)
+    except FileNotFoundError:
+        return JSONResponse(
+                content={"message": "File not found", "path": file_dir},
+                status_code=404
+            )
+    except Exception as e:
+        return JSONResponse(content={"message": f"Error downloading file: {str(e)}"}, status_code=500)
+
 
 
 @router.delete(URL + "/delete/{name_file}")
